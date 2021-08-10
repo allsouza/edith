@@ -4,6 +4,9 @@ class PRReview {
     ack();
 
     try {
+      console.log(payload);
+      console.log(context);
+      console.log(app);
       const result = await app.client.views.open(
       { 
         token: context.botToken,
