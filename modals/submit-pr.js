@@ -1,6 +1,4 @@
-export {prReview};
-
-const prReview = {
+export const prReviewModal = {
         type: 'modal',
         // View identifier
         callback_id: 'view_1',
@@ -42,4 +40,4 @@ const prReview = {
           type: 'plain_text',
           text: 'Submit'
         }
-      };
+      }
