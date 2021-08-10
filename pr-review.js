@@ -1,5 +1,3 @@
-import prSubmit from "./modals/pr-submit.js";
-
 class PRReview {
   static async initialModal(ack, payload, context, app) {
     // Acknowledge the command request
@@ -22,30 +20,55 @@ class PRReview {
         },
         blocks: [
           {
-            type: 'section',
-            text: {
-              type: 'mrkdwn',
-              text: 'Welcome to a modal with _blocks_'
+            type: 'input',
+            block_id: 'pr_summary',
+            label: {
+              type: 'plain_text',
+              text: 'PR Summary'
             },
-            accessory: {
-              type: 'button',
-              text: {
-                type: 'plain_text',
-                text: 'Click me!'
-              },
-              action_id: 'button_abc'
+            element: {
+              type: 'plain_text_input',
+              action_id: 'summary_input',
+              multiline: false
             }
           },
           {
             type: 'input',
-            block_id: 'test_input',
+            block_id: 'pr_service',
             label: {
               type: 'plain_text',
-              text: 'What are your hopes and dreams?'
+              text: 'Service'
             },
             element: {
               type: 'plain_text_input',
-              action_id: 'dreamy_input',
+              action_id: 'service_input',
+              multiline: false
+            }
+          },
+          {
+            type: 'input',
+            block_id: 'pr_link',
+            label: {
+              type: 'plain_text',
+              text: 'PR Link'
+            },
+            element: {
+              type: 'plain_text_input',
+              action_id: 'link_input',
+              multiline: false
+            }
+          },
+          {
+            type: 'input',
+            block_id: 'pr_notes',
+            optional: true,
+            label: {
+              type: 'plain_text',
+              text: 'PR Notes'
+            },
+            element: {
+              type: 'plain_text_input',
+              action_id: 'notes_input',
               multiline: true
             }
           }
