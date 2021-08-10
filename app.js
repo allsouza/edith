@@ -59,7 +59,7 @@ app.action('button_abc', async ({ ack, body, context }) => {
 
 app.view('view_1', ({ ack, body, view, context }) => {
   // Acknowledge the view_submission event
-  ack("When does this happen?");
+  ack();
   
   // Do whatever you want with the input data - here we're saving it to a DB then sending the user a verifcation of their submission
 
