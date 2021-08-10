@@ -11,6 +11,7 @@ const app = new App({
 
 // Listen for a slash command invocation
 app.command('/pr_review', async ({ ack, payload, context }) => {
+  debugger
   PRReview.initialModal(ack, payload, context, app);
 });
 
@@ -19,6 +20,7 @@ app.command('/pr_review', async ({ ack, payload, context }) => {
 app.action('button_abc', async ({ ack, body, context }) => {
   // Acknowledge the button request
   ack();
+  debugger;
 
   try {
     const result = await app.client.views.update({
