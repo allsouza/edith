@@ -88,13 +88,15 @@ class PRReview {
   static async postPRReviewRequest(id, data) {
     try {
       const message = "Hiiii";
-      console.log(data)
+      console.log(data);
       const result = await app.client.chat.postMessage({
         token: process.env.SLACK_BOT_TOKEN,
         channel: id,
         text: message
       });
       console.log(result)
+    } catch(error) {
+      
     }
   }
 }
