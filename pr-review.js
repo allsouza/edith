@@ -4,9 +4,6 @@ class PRReview {
     ack();
 
     try {
-      console.log(payload);
-      console.log(context);
-      console.log(app);
       const result = await app.client.views.open(
       { 
         token: context.botToken,
@@ -85,6 +82,19 @@ class PRReview {
       console.log(result);
     } catch (error) {
       console.error(error);
+    }
+  }
+  
+  static async postPRReviewRequest(id, data) {
+    try {
+      const message = "Hiiii";
+      console.log(data)
+      const result = await app.client.chat.postMessage({
+        token: process.env.SLACK_BOT_TOKEN,
+        channel: id,
+        text: message
+      });
+      console.log(result)
     }
   }
 }
