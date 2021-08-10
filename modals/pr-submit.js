@@ -1,13 +1,5 @@
-import prSubmit from "./modals/pr-submit.js";
-
-class PRReview {
-  static async initialModal(ack, payload, context, app) {
-    // Acknowledge the command request
-    ack();
-
-    try {
-      const result = await app.client.views.open(
-      { 
+export f prSubmit(context, payload) {
+      return { 
         token: context.botToken,
       // Pass a valid trigger_id within 3 seconds of receiving it
       trigger_id: payload.trigger_id,
@@ -55,12 +47,5 @@ class PRReview {
           text: 'Submit'
         }
       }
-  });
-      console.log(result);
-    } catch (error) {
-      console.error(error);
-    }
   }
 }
-
-module.exports = { PRReview };
