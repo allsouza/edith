@@ -1,5 +1,3 @@
-// const prReviewModal = require('./modals/submit-pr.js');
-
 class PRReview {
   static async initialModal(ack, payload, context, app) {
     // Acknowledge the command request
@@ -17,7 +15,7 @@ class PRReview {
         callback_id: 'view_1',
         title: {
           type: 'plain_text',
-          text: 'Modal title'
+          text: 'PR Review'
         },
         blocks: [
           {
@@ -63,4 +61,4 @@ class PRReview {
   }
 }
 
-module.exports = PRReview;
+module.exports = {PRReview};
