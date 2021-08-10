@@ -1,0 +1,4 @@
+
+class PRReview {
+  static  initialModal()
+}
