@@ -15,7 +15,7 @@ app.command('/pr_review', async ({ ack, payload, context }) => {
 
 app.command('/view_prs', async ({ack, payload, context}) => {
   ack();
-  PRReview.fetchPendingPRs(payload.channel_id, payload.user_id)
+  PRReview.fetchPendingPRs(payload.channel_id, payload.user_id, app)
 });
 
 app.view('pr_review_modal_view', ({ ack, body, view }) => {

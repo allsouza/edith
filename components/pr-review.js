@@ -165,7 +165,7 @@ class PRReview {
     }
   }
   
-  static async fetchPendingPRs(channel_id, user_id) {
+  static async fetchPendingPRs(channel_id, user_id, app) {
     const data = await MongoDB.listChannelPRs(channel_id);
     const blocks = [];
     debugger
@@ -174,7 +174,7 @@ class PRReview {
             type: "section",
             text: {
               type: "mrkdwn",
-              text: "This is a PR"
+              text: `<@${user_id}>'s ${entry.state.values.pr_service.service_input.value} PR to ${entry.state.values.pr_summary.summary_input.value}'`
             },
             accessory: {
               type: "button",
@@ -184,12 +184,18 @@ class PRReview {
                 emoji: true
               },
               value: "link_button",
-              url: link,
+              url: entry.state.values.pr_link.link_input.value,
               action_id: "link-button-action"
             }
           })
-    })
-    console.log(data)
+    });
+        app.client.chat.postEphemeral({
+          token: process.env.SLACK_BOT_TOKEN,
+          channel: channel_id,
+          blocks: blocks,
+          user: user_id
+        });
+    
   }
 }
 
