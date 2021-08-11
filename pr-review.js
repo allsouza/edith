@@ -2,7 +2,7 @@ class PRReview {
   static async initialModal(ack, payload, context, app) {
     // Acknowledge the command request
     ack();
-  // debugger
+    debugger
     try {
       const result = await app.client.views.open(
       { 
@@ -71,6 +71,9 @@ class PRReview {
               action_id: 'notes_input',
               multiline: true
             }
+          },
+          {
+            type: ''
           }
         ],
         submit: {
