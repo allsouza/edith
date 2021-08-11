@@ -164,6 +164,10 @@ class PRReview {
       console.error(error);
     }
   }
+  
+  static async fetchPendingPRs() {
+    
+  }
 }
 
 module.exports = { PRReview };
