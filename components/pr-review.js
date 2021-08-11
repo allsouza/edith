@@ -149,6 +149,9 @@ class PRReview {
         })
       }
       
+      data.status("open");
+      data.author(user_id);
+      debugger
       //Save to DB
       await MongoDB.savePR(channel_id, data)
     } catch (error) {
@@ -174,7 +177,7 @@ class PRReview {
             type: "section",
             text: {
               type: "mrkdwn",
-              text: `<@${user_id}>'s ${entry.state.values.pr_service.service_input.value} PR to ${entry.state.values.pr_summary.summary_input.value}'`
+              text: `<@${entry.author}>'s ${entry.state.values.pr_service.service_input.value} PR to ${entry.state.values.pr_summary.summary_input.value}'`
             },
             accessory: {
               type: "button",
