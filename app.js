@@ -11,7 +11,6 @@ const app = new App({
 
 // Listen for a slash command invocation
 app.command('/pr_review', async ({ ack, payload, context }) => {
-  debugger
   PRReview.initialModal(ack, payload, context, app);
 });
 
