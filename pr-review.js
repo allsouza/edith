@@ -108,7 +108,7 @@ class PRReview {
       data.state.values.channel_select.channel_select.selected_conversation;
 
     try {
-      const message = `Hey team, <@${user_id}> would like your help reviewing their Pull Request for ${service}. \n _Summary: ${summary}_`;
+      const message = `:bitbucket: *Hey team, please review this ${service} PR for <@${user_id}>*. :bitbucket: \n _Summary: ${summary}_`;
 
       const result = await app.client.chat.postMessage({
         token: token,
@@ -137,7 +137,14 @@ class PRReview {
           }
         ]
       });
-      // console.log(result);
+      if(notes != null) {
+        app.client.chat.postMessage({
+          token: token,
+          channel: channel_id,
+          thread_ts: result.message.ts,
+          text: `PR Notes: ${notes}`
+        })
+      }
     } catch (error) {
       if (error.data.errors[0].includes("invalid url")) {
         app.client.chat.postEphemeral({
@@ -150,10 +157,6 @@ class PRReview {
       }
       console.error(error);
     }
-  }
-  
-  static async addNotesInThread() {
-    
   }
 }
 
