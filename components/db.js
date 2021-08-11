@@ -3,10 +3,11 @@ const { MongoClient } = require('mongodb');
 
 const password = process.env.ATLAS_PASSWORD;
 const uri = `mongodb+srv://edithAdmin:${password}@edith.vqfcf.mongodb.net/EDITH?retryWrites=true&w=majority`;
+const createClient = () => new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
 
 class MongoDB {
   static async getAll() {
-    const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+    const client = createClient();
     try {
       await client.connect();
       const dbList = await client.db().admin().listDatabases();
@@ -20,7 +21,7 @@ class MongoDB {
   }
   
   static async savePR(collectionName, data) {
-    const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+    const client = createClient();
     try {
       await client.connect();
       const result = await client.db().collection(collectionName).insertOne(data);
@@ -30,6 +31,11 @@ class MongoDB {
     } finally {
       client.close();
     }
+  }
+  
+  static async listChannelPRs(channel_id) {
+    const client = createClient();
+    const result = await client.db().collection(channel_id).list();
   }
   
 }
