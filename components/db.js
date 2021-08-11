@@ -37,7 +37,7 @@ class MongoDB {
     const client = createClient();
     try {
       await client.connect();
-      const result = await client.db().collection(channel_id).find();
+      const result = await client.db().collection(channel_id).find().toArray();
       return result;
     } catch (error) {
       console.error(error)
