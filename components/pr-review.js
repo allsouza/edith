@@ -1,3 +1,5 @@
+const { MongoDB } = require('./db.js');
+
 class PRReview {
   static async initialModal(ack, payload, context, app) {
     // Acknowledge the command request
@@ -137,6 +139,7 @@ class PRReview {
           }
         ]
       });
+      
       if(notes != null) {
         app.client.chat.postMessage({
           token: token,
@@ -145,6 +148,9 @@ class PRReview {
           text: `PR Notes: ${notes}`
         })
       }
+      
+      //Save to DB
+      await MongoDB.savePR(channel_id, data)
     } catch (error) {
       if (error.data.errors[0].includes("invalid url")) {
         app.client.chat.postEphemeral({
