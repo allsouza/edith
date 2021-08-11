@@ -13,7 +13,7 @@ app.command('/pr_review', async ({ ack, payload, context }) => {
   PRReview.initialModal(ack, payload, context, app);
 });
 
-app.command('/view_db', async ({ack, payload, context}) => {
+app.command('/view_prs', async ({ack, payload, context}) => {
   ack();
   PRReview.fetchPendingPRs(payload.channel_id, payload.user_id)
 });
