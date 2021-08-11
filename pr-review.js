@@ -108,8 +108,7 @@ class PRReview {
       const result = await app.client.chat.postMessage({
         token: process.env.SLACK_BOT_TOKEN,
         channel: id,
-        text: "<@U029MQ7BJ5R> Hi there.",
-        as_user: true
+        text: "<@U029MQ7BJ5R> Hi there."
       });
       console.log(result)
     } catch(error) {
