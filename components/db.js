@@ -1,24 +1,27 @@
 
 const { MongoClient } = require('mongodb');
 
-export class MongoDB {
+const password = process.env.ATLAS_PASSWORD;
+const uri = `mongodb+srv://edithAdmin:${password}@edith.vqfcf.mongodb.net/EDITH?retryWrites=true&w=majority`;
 
-  const password = process.env.ATLAS_PASSWORD;
-  const uri = `mongodb+srv://edithAdmin:${password}@edith.vqfcf.mongodb.net/EDITH?retryWrites=true&w=majority`;
-  const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
-
-  async function getAll() {
+class MongoDB {
+  static async getAll() {
+    const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+    debugger
     try {
-      client.connect();
-    } catch(error) {
+      await client.connect();
       
+      const dbList = client.db().admin().listDatabases();
+      debugger
+      console.log(dbList)
+    } catch(error) {
+      console.error(error);
     } finally {
       client.close();
     }
-  });
   }
   
 }
 
-module.export { MongoDB };
+module.exports = { MongoDB };
 

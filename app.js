@@ -1,6 +1,7 @@
 // Require the Bolt package (github.com/slackapi/bolt)
 const { App } = require("@slack/bolt");
 const { PRReview } = require("./components/pr-review.js");
+const { MongoDB } = require("./components/db.js");
 
 const app = new App({
   token: process.env.SLACK_BOT_TOKEN,
@@ -10,6 +11,11 @@ const app = new App({
 // Listen for a slash command invocation
 app.command('/pr_review', async ({ ack, payload, context }) => {
   PRReview.initialModal(ack, payload, context, app);
+});
+
+app.command('/view_db', async ({ack, payload, context}) => {
+  ack();
+  MongoDB.getAll();
 });
 
 app.view('pr_review_modal_view', ({ ack, body, view }) => {
