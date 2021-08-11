@@ -102,7 +102,7 @@ class PRReview {
   static async postPRReviewRequest(id, data, app) {
     try {
       // debugger
-      const message = "Hiiii";
+      const message = "<@{here}>Hiiii";
       console.log("Inside post message");
       debugger
       const result = await app.client.chat.postMessage({
