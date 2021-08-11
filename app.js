@@ -23,6 +23,8 @@ app.view('pr_review_modal_view', ({ ack, body, view }) => {
   PRReview.postPRReviewRequest(body.user.id, view, app)
 });
 
+app.action('link-button-action', ({ ack }) => ack());
+
 
 (async () => {
   // Start your app

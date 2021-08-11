@@ -1,4 +1,4 @@
-const { MongoDB } = require('./db.js');
+const { MongoDB } = require("./db.js");
 
 class PRReview {
   static async initialModal(ack, payload, context, app) {
@@ -139,22 +139,23 @@ class PRReview {
           }
         ]
       });
-      
-      if(notes != null) {
+
+      if (notes != null) {
         app.client.chat.postMessage({
           token: token,
           channel: channel_id,
           thread_ts: result.message.ts,
           text: `PR Notes: ${notes}`
-        })
+        });
       }
-      
+
       const dbObject = {
-        ...data, status: 'open', author: user_id
-      }
-      debugger
+        ...data,
+        status: "open",
+        author: user_id
+      };
       //Save to DB
-      await MongoDB.savePR(channel_id, dbObject)
+      await MongoDB.savePR(channel_id, dbObject);
     } catch (error) {
       if (error.data && error.data.errors[0].includes("invalid url")) {
         app.client.chat.postEphemeral({
@@ -168,38 +169,46 @@ class PRReview {
       console.error(error);
     }
   }
-  
+
   static async fetchPendingPRs(channel_id, user_id, app) {
     const data = await MongoDB.listChannelPRs(channel_id);
-    const blocks = [];
-    debugger
+    const blocks = [
+      {
+        type: "header",
+        text: {
+          type: "plain_text",
+          text: "Open PRs in your channel",
+          emoji: true
+        }
+      }
+    ];
     data.forEach(entry => {
       blocks.push({
-            type: "section",
-            text: {
-              type: "mrkdwn",
-              text: `<@${entry.author}>'s ${entry.state.values.pr_service.service_input.value} PR to ${entry.state.values.pr_summary.summary_input.value}'`
-            },
-            accessory: {
-              type: "button",
-              text: {
-                type: "plain_text",
-                text: "Take a look :eyes:",
-                emoji: true
-              },
-              value: "link_button",
-              url: entry.state.values.pr_link.link_input.value,
-              action_id: "link-button-action"
-            }
-          })
+        type: "section",
+        text: {
+          type: "mrkdwn",
+          text: `<@${entry.author}>'s ${entry.state.values.pr_service.service_input.value} PR to ${entry.state.values.pr_summary.summary_input.value}'`
+        },
+        accessory: {
+          type: "button",
+          text: {
+            type: "plain_text",
+            text: "Take a look :eyes:",
+            emoji: true
+          },
+          value: "link_button",
+          url: entry.state.values.pr_link.link_input.value,
+          action_id: "link-button-action"
+        }
+      });
+      blocks.push({ type: "divider" });
     });
-        app.client.chat.postEphemeral({
-          token: process.env.SLACK_BOT_TOKEN,
-          channel: channel_id,
-          blocks: blocks,
-          user: user_id
-        });
-    
+    app.client.chat.postEphemeral({
+      token: process.env.SLACK_BOT_TOKEN,
+      channel: channel_id,
+      blocks: blocks,
+      user: user_id
+    });
   }
 }
 
