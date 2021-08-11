@@ -167,7 +167,28 @@ class PRReview {
   
   static async fetchPendingPRs(channel_id, user_id) {
     const data = await MongoDB.listChannelPRs(channel_id);
+    const blocks = [];
     debugger
+    data.forEach(entry => {
+      blocks.push({
+            type: "section",
+            text: {
+              type: "mrkdwn",
+              text: "This is a PR"
+            },
+            accessory: {
+              type: "button",
+              text: {
+                type: "plain_text",
+                text: "Take a look :eyes:",
+                emoji: true
+              },
+              value: "link_button",
+              url: link,
+              action_id: "link-button-action"
+            }
+          })
+    })
     console.log(data)
   }
 }
