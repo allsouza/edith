@@ -65,10 +65,10 @@ app.view('view_1', ({ ack, body, view, context }) => {
   // Do whatever you want with the input data - here we're saving it to a DB then sending the user a verifcation of their submission
 
   // Assume there's an input block with `test_input` as the block_id and `dreamy_input` as the action_id
-  const channel_id = view['state']['values']['pr_summary']['summary_input'];
+  const channel_id = view['state']['values']['channel_select']['channel_select'];
   const user = body['user']['id'];
   debugger
-  postPRReviewRequest(channel_id'], view)
+  postPRReviewRequest(channel_id, view)
   
   // You'll probably want to store these values somewhere
   console.log(val);
