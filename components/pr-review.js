@@ -149,13 +149,14 @@ class PRReview {
         })
       }
       
-      data.status("open");
-      data.author(user_id);
+      const dbObject = {
+        ...data, status: 'open', author: user_id
+      }
       debugger
       //Save to DB
-      await MongoDB.savePR(channel_id, data)
+      await MongoDB.savePR(channel_id, dbObject)
     } catch (error) {
-      if (error.data.errors[0].includes("invalid url")) {
+      if (error.data && error.data.errors[0].includes("invalid url")) {
         app.client.chat.postEphemeral({
           token: token,
           channel: channel_id,
