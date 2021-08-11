@@ -11,7 +11,7 @@ class PRReview {
         view: {
           type: "modal",
           // View identifier
-          callback_id: "view_1",
+          callback_id: "pr_review_modal_view",
           title: {
             type: "plain_text",
             text: "PR Review"
