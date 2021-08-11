@@ -100,8 +100,9 @@ class PRReview {
 
   static async postPRReviewRequest(id, data, app) {
     try {
-      // debugger
-      const message = "<@{here}>Hiiii";
+      debugger
+      const service = ;
+      const message = `Hey team, <@U029MQ7BJ5R> would like your help reviewing their Pull Request for ${variable}. \n _Summary: <summary>_`;
       console.log("Inside post message");
       debugger;
       const result = await app.client.chat.postMessage({
@@ -115,8 +116,7 @@ class PRReview {
             type: "section",
             text: {
               type: "mrkdwn",
-              text:
-                "Hey team, <@U029MQ7BJ5R> would like your help reviewing their Pull Request for <${message}>. \n Summary: <summary>"
+              text: message
             },
             accessory: {
               type: "button",
@@ -135,7 +135,7 @@ class PRReview {
           }
         ]
       });
-      console.log(result);
+      // console.log(result);
     } catch (error) {
       console.error(error);
     }
