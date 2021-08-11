@@ -104,10 +104,10 @@ class PRReview {
       const link = data.state.values.pr_link.link_input.value;
       const service = data.state.values.pr_service.service_input.value;
       const notes = data.state.values.pr_notes.notes_input.value;
-      const channel_id = data.state.values.channel_select.channel_select.value;
-
+      const channel_id = data.state.values.channel_select.channel_select.selected_conversation;
+      
       const message = `Hey team, <@${user_id}> would like your help reviewing their Pull Request for ${service}. \n _Summary: ${summary}_`;
-debugger
+
       const result = await app.client.chat.postMessage({
         token: process.env.SLACK_BOT_TOKEN,
         channel: channel_id,
@@ -137,6 +137,10 @@ debugger
       });
       // console.log(result);
     } catch (error) {
+      debugger
+      if(error.data.errors[0].includes("invalid url")) {
+        debugger
+      }
       console.error(error);
     }
   }
