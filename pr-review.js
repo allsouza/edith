@@ -2,7 +2,6 @@ class PRReview {
   static async initialModal(ack, payload, context, app) {
     // Acknowledge the command request
     ack();
-    debugger
     try {
       const result = await app.client.views.open(
       { 
@@ -73,7 +72,19 @@ class PRReview {
             }
           },
           {
-            type: ''
+            type: 'input',
+            block_id: 'channel_select',
+            optional: true,
+            label: {
+              type: 'plain_text',
+              text: 'PR Review Request to be posted on '
+            },
+            element: {
+              action_id: 'channel_select',
+              type: 'conversations_select',
+              response_url_enabled: true,
+              default_to_current_conversation: true
+            }
           }
         ],
         submit: {

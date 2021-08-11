@@ -58,17 +58,17 @@ app.action('button_abc', async ({ ack, body, context }) => {
   }
 });
 
-app.view('view_1', ({ ack, body, view, context, response_urls }) => {
+app.view('view_1', ({ ack, body, view, context }) => {
   // Acknowledge the view_submission event
   ack();
   
   // Do whatever you want with the input data - here we're saving it to a DB then sending the user a verifcation of their submission
 
   // Assume there's an input block with `test_input` as the block_id and `dreamy_input` as the action_id
-  const val = view['state']['values']['pr_summary']['summary_input'];
+  const channel_id = view['state']['values']['pr_summary']['summary_input'];
   const user = body['user']['id'];
   debugger
-  postPRReviewRequest(response_urls['channel_id'], view)
+  postPRReviewRequest(channel_id'], view)
   
   // You'll probably want to store these values somewhere
   console.log(val);
