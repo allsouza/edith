@@ -71,9 +71,6 @@ app.view('view_1', ({ ack, body, view, context }) => {
   
   PRReview.postPRReviewRequest(channel_id, view, app)
   
-  // You'll probably want to store these values somewhere
-  console.log(channel_id);
-  console.log(user);
   } catch (error) {
     console.error(error)
   }

@@ -104,6 +104,7 @@ class PRReview {
       // debugger
       const message = "Hiiii";
       console.log("Inside post message");
+      debugger
       const result = await app.client.chat.postMessage({
         token: process.env.SLACK_BOT_TOKEN,
         channel: id,
