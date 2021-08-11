@@ -15,7 +15,9 @@ app.command('/pr_review', async ({ ack, payload, context }) => {
 
 app.command('/view_db', async ({ack, payload, context}) => {
   ack();
-  MongoDB.getAll();
+  const result = await MongoDB.listChannelPRs(payload.channel_id);
+  debugger
+  console.log(result);
 });
 
 app.view('pr_review_modal_view', ({ ack, body, view }) => {

@@ -35,7 +35,16 @@ class MongoDB {
   
   static async listChannelPRs(channel_id) {
     const client = createClient();
-    const result = await client.db().collection(channel_id).list();
+    try {
+      await client.connect();
+      const result = await client.db().collection(channel_id).find();
+      return result;
+    } catch (error) {
+      console.error(error)
+    } finally {
+      client.close();
+    }
+    
   }
   
 }
