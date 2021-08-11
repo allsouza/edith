@@ -165,8 +165,8 @@ class PRReview {
     }
   }
   
-  static async fetchPendingPRs() {
-    
+  static async fetchPendingPRs(channel_id, user_id) {
+    const data = MongoDB.listChannelPRs(channel_id);
   }
 }
 
