@@ -99,10 +99,11 @@ class PRReview {
     }
   }
   
-  static async postPRReviewRequest(id, data) {
+  static async postPRReviewRequest(id, data, app) {
     try {
+      // debugger
       const message = "Hiiii";
-      console.log(data);
+      console.log("Inside post message");
       const result = await app.client.chat.postMessage({
         token: process.env.SLACK_BOT_TOKEN,
         channel: id,
@@ -110,7 +111,7 @@ class PRReview {
       });
       console.log(result)
     } catch(error) {
-      
+      console.error(error)
     }
   }
 }

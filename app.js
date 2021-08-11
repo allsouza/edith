@@ -2,7 +2,7 @@
 // It uses slash commands, views.open, and views.update
 // Require the Bolt package (github.com/slackapi/bolt)
 const { App } = require("@slack/bolt");
-const {PRReview, postPRReviewRequest} = require("./pr-review.js");
+const {PRReview} = require("./pr-review.js");
 
 const app = new App({
   token: process.env.SLACK_BOT_TOKEN,
@@ -62,17 +62,22 @@ app.view('view_1', ({ ack, body, view, context }) => {
   // Acknowledge the view_submission event
   ack();
   
-  // Do whatever you want with the input data - here we're saving it to a DB then sending the user a verifcation of their submission
+  try {
+      // Do whatever you want with the input data - here we're saving it to a DB then sending the user a verifcation of their submission
 
   // Assume there's an input block with `test_input` as the block_id and `dreamy_input` as the action_id
-  const channel_id = view['state']['values']['channel_select']['channel_select'];
+  const channel_id = view['state']['values']['channel_select']['channel_select']['selected_conversation'];
   const user = body['user']['id'];
-  debugger
-  postPRReviewRequest(channel_id, view)
+  
+  PRReview.postPRReviewRequest(channel_id, view, app)
   
   // You'll probably want to store these values somewhere
-  console.log(val);
+  console.log(channel_id);
   console.log(user);
+  } catch (error) {
+    console.error(error)
+  }
+
 });
 
 
