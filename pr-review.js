@@ -99,17 +99,19 @@ class PRReview {
   }
 
   static async postPRReviewRequest(user_id, data, app) {
+    const token = process.env.SLACK_BOT_TOKEN;
+    const summary = data.state.values.pr_summary.summary_input.value;
+    const link = data.state.values.pr_link.link_input.value;
+    const service = data.state.values.pr_service.service_input.value;
+    const notes = data.state.values.pr_notes.notes_input.value;
+    const channel_id =
+      data.state.values.channel_select.channel_select.selected_conversation;
+
     try {
-      const summary = data.state.values.pr_summary.summary_input.value;
-      const link = data.state.values.pr_link.link_input.value;
-      const service = data.state.values.pr_service.service_input.value;
-      const notes = data.state.values.pr_notes.notes_input.value;
-      const channel_id = data.state.values.channel_select.channel_select.selected_conversation;
-      
       const message = `Hey team, <@${user_id}> would like your help reviewing their Pull Request for ${service}. \n _Summary: ${summary}_`;
 
       const result = await app.client.chat.postMessage({
-        token: process.env.SLACK_BOT_TOKEN,
+        token: token,
         channel: channel_id,
         blocks: [
           {
@@ -137,12 +139,21 @@ class PRReview {
       });
       // console.log(result);
     } catch (error) {
-      debugger
-      if(error.data.errors[0].includes("invalid url")) {
-        debugger
+      if (error.data.errors[0].includes("invalid url")) {
+        app.client.chat.postEphemeral({
+          token: token,
+          channel: channel_id,
+          text:
+            "Invalid PR link! Make sure your link is correct and try again.",
+          user: user_id
+        });
       }
       console.error(error);
     }
+  }
+  
+  static async addNotesInThread() {
+    
   }
 }
 
