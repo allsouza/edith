@@ -98,20 +98,20 @@ class PRReview {
     }
   }
 
-  static async postPRReviewRequest(id, data, app) {
+  static async postPRReviewRequest(user_id, data, app) {
     try {
-      debugger
-      const service = ;
-      const message = `Hey team, <@U029MQ7BJ5R> would like your help reviewing their Pull Request for ${variable}. \n _Summary: <summary>_`;
-      console.log("Inside post message");
-      debugger;
+      const summary = data.state.values.pr_summary.summary_input.value;
+      const link = data.state.values.pr_link.link_input.value;
+      const service = data.state.values.pr_service.service_input.value;
+      const notes = data.state.values.pr_notes.notes_input.value;
+      const channel_id = data.state.values.channel_select.channel_select.value;
+
+      const message = `Hey team, <@${user_id}> would like your help reviewing their Pull Request for ${service}. \n _Summary: ${summary}_`;
+debugger
       const result = await app.client.chat.postMessage({
         token: process.env.SLACK_BOT_TOKEN,
-        channel: id,
+        channel: channel_id,
         blocks: [
-          {
-            type: "divider"
-          },
           {
             type: "section",
             text: {
@@ -125,9 +125,9 @@ class PRReview {
                 text: "Take a look :eyes:",
                 emoji: true
               },
-              value: "click_me_123",
-              url: "https://google.com",
-              action_id: "button-action"
+              value: "link_button",
+              url: link,
+              action_id: "link-button-action"
             }
           },
           {
