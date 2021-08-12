@@ -213,7 +213,7 @@ class PRReview {
         type: "section",
         text: {
           type: "mrkdwn",
-          text: `${timeElapsed} \t :${emoji}: \t <@${entry.author}>'s ${entry.service} PR to ${entry.summary}'`
+          text: `:${emoji}: \t <@${entry.author}>'s ${entry.service} PR to ${entry.summary}' \n _${timeElapsed}_`
         },
         accessory: {
           type: "button",
