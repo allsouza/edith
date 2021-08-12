@@ -303,6 +303,10 @@ class PRReview {
       }
     }
   }
+  
+  static async takeActionModal() {
+    
+  }
 
   static async mergedPR() {}
 }
