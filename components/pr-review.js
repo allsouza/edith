@@ -207,7 +207,7 @@ class PRReview {
           break;
       }
 
-      const timeElapsed = TimeFormatter.getDifference(
+      const createdAt = TimeFormatter.getDifference(
         entry.created_at,
         new Date()
       );
@@ -216,55 +216,93 @@ class PRReview {
         type: "section",
         text: {
           type: "mrkdwn",
-          text: `:${emoji}: \t <@${entry.author}>'s ${entry.service} PR to ${entry.summary} \n _${timeElapsed}_`
-        },
-        accessory: {
-          type: "button",
-          text: {
-            type: "plain_text",
-            text: "Take Action",
-            emoji: true
-          },
-          value: {"post_id": entry.pr_post_id},
-          url: entry.link,
-          action_id: "take-action-button"
+          text: `<${entry.author}>'s ${entry.service} review request:`
         }
       });
+
+      blocks.push({
+        type: "section",
+        fields: [
+          {
+            type: "mrkdwn",
+            text: `*Summary:*\n${entry.summary}`
+          },
+          {
+            type: "mrkdwn",
+            text: `*Status:*\n${emoji} \t${entry.status}`
+          },
+          {
+            type: "mrkdwn",
+            text: `*Created:*\n${createdAt}`
+          },
+          {
+            type: "mrkdwn",
+            text: `*Notes:*\n${entry.notes ? entry.notes : ""}`
+          }
+        ]
+      });
+
+      blocks.push({
+        type: "actions",
+        elements: [
+          {
+            type: "button",
+            text: {
+              type: "plain_text",
+              emoji: true,
+              text: ":eyes: Take a look "
+            },
+            value: "view",
+            url: `${entry.link}`,
+            action_id: "open-pr-action"
+          },
+          {
+            type: "button",
+            text: {
+              type: "plain_text",
+              emoji: true,
+              text: ":approved: Approve"
+            },
+            style: "primary",
+            value: "approve",
+            action_id: "open-pr-action"
+          },
+          {
+            type: "button",
+            text: {
+              type: "plain_text",
+              emoji: true,
+              text: ":reviewed: Review"
+            },
+            style: "danger",
+            value: "review",
+            action_id: "open-pr-action"
+          }
+        ]
+      });
+
       // blocks.push({
-      //   type: "actions",
-      //   elements: [
-      //     {
-      //       type: "static_select",
-      //       placeholder: {
-      //         type: "plain_text",
-      //         text: "Select an action",
-      //         emoji: true
-      //       },
-      //       options: [
-      //         {
-      //           text: {
-      //             type: "plain_text",
-      //             text: ":reviewed: Mark as reviewed",
-      //             emoji: true
-      //           },
-      //           value: "reviewed"
-      //         },
-      //         {
-      //           text: {
-      //             type: "plain_text",
-      //             text: ":approved: Mark as approved",
-      //             emoji: true
-      //           },
-      //           value: "approved"
-      //         }
-      //       ],
-      //       action_id: "review-action"
-      //     }
-      //   ]
+      //   type: "section",
+      //   text: {
+      //     type: "mrkdwn",
+      //     text: `:${emoji}: \t <@${entry.author}>'s ${entry.service} PR to ${entry.summary} \n _${timeElapsed}_`
+      //   },
+      //   accessory: {
+      //     type: "button",
+      //     text: {
+      //       type: "plain_text",
+      //       text: "Take Action",
+      //       emoji: true
+      //     },
+      //     value: {"post_id": entry.pr_post_id},
+      //     url: entry.link,
+      //     action_id: "take-action-button"
+      //   }
       // });
+
       blocks.push({ type: "divider" });
     });
-
+debugger
     // Returns result to user
     app.client.chat.postEphemeral({
       token: process.env.SLACK_BOT_TOKEN,
@@ -303,10 +341,8 @@ class PRReview {
       }
     }
   }
-  
-  static async takeActionModal() {
-    
-  }
+
+  static async takeActionModal() {}
 
   static async mergedPR() {}
 }
