@@ -25,6 +25,11 @@ app.view('pr_review_modal_view', ({ ack, body, view }) => {
 
 app.action('link-button-action', ({ ack }) => ack());
 
+app.event('reaction_added', async ({ event, client }) => {
+  debugger
+  console.log(event);
+});
+
 
 (async () => {
   // Start your app
