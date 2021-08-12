@@ -225,7 +225,7 @@ class PRReview {
             text: "Take Action",
             emoji: true
           },
-          value: "take_action_button",
+          value: {"post_id": entry.pr_post_id},
           url: entry.link,
           action_id: "take-action-button"
         }

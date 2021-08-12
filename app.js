@@ -31,7 +31,7 @@ app.action("take-action-button", ({ ack, body, context }) => {
   console.log(body);
 });
 
-app.action("review-action", ({ ack, body, context}) => {
+app.action("review-action", ({ ack, body, payload, context}) => {
   ack();
   debugger
   console.log("Hi")
