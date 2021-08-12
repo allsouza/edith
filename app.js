@@ -28,13 +28,21 @@ app.action('link-button-action', ({ ack }) => ack());
 
 app.event('reaction_added', async ({ event, client }) => {
   if(event.reaction == "reviewed" || event.reaction == "approved") {
-      const author = await MongoDB.find(event.item.channel, {"pr_post_id": event.item.ts})[0].author;
-      if(author) {
+      const result = await MongoDB.find(event.item.channel, {"pr_post_id": event.item.ts})
+      if(result) {
         client.chat.postMessage({
         token: process.env.SLACK_BOT_TOKEN,
-        channel: author,
+        channel: result[0].author,
         text: `Your PR was ${event.reaction} by <@${event.user}>`
       })
+        
+      switch(event.reaction) {
+          case("reviewed"):
+            
+          break;
+          case("approved"):
+          break;
+      }
     } 
   }
   console.log(event);

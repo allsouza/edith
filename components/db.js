@@ -59,6 +59,8 @@ class MongoDB {
     
   }
   
+  static async update()
+  
 }
 
 module.exports = { MongoDB };
