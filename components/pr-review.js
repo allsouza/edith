@@ -1,4 +1,5 @@
 const { MongoDB } = require("./db.js");
+const { TimeFormatter } = require("../utils/time-formatter.js");
 
 class PRReview {
   static async initialModal(ack, payload, context, app) {
@@ -206,12 +207,13 @@ class PRReview {
             break;
       }
       
-      const timeDif
+      const timeElapsed = TimeFormatter.getDifference(entry.created_at, new Date());
+      
       blocks.push({
         type: "section",
         text: {
           type: "mrkdwn",
-          text: `:${emoji}: \t <@${entry.author}>'s ${entry.service} PR to ${entry.summary}'`
+          text: `${timeElapsed} \t :${emoji}: \t <@${entry.author}>'s ${entry.service} PR to ${entry.summary}'`
         },
         accessory: {
           type: "button",
