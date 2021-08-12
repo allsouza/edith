@@ -193,6 +193,18 @@ class PRReview {
 
     //Populates the block with entries from DB
     data.forEach(entry => {
+      let emoji;
+      switch(entry.status) {
+          case("reviewed"):
+            emoji = "reviewed";
+            break;
+          case("approved"):
+            emoji = "approved";
+            break;
+          case("open"):
+            emoji = ""
+          
+      }
       blocks.push({
         type: "section",
         text: {
