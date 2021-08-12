@@ -27,6 +27,7 @@ class EncryptionEngine {
 
   static decryptPRPayload(payload) {
     const decrypted = {
+      _id: payload._id,
       summary: decrypt(payload.summary),
       notes: decrypt(payload.notes),
       service: decrypt(payload.service),

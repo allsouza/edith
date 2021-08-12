@@ -15,7 +15,6 @@ app.command("/pr_review", async ({ ack, payload, context }) => {
 
 app.command("/view_prs", async ({ ack, payload, context }) => {
   ack();
-  debugger;
   PRReview.fetchPendingPRs(payload, app);
 });
 

@@ -38,7 +38,9 @@ class MongoDB {
     const client = createClient();
     try {
       await client.connect();
-      const result = await client.db().collection(channel_id).find().toArray();
+      let result = await client.db().collection(channel_id).find().toArray();
+      result = result.map(entry => EncryptionEngine.decryptPRPayload(entry))
+      debugger
       return result;
     } catch (error) {
       console.error(error)
