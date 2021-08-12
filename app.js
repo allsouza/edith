@@ -27,20 +27,25 @@ app.view('pr_review_modal_view', ({ ack, body, view }) => {
 app.action('link-button-action', ({ ack }) => ack());
 
 app.event('reaction_added', async ({ event, client }) => {
-  if(event.reaction == "reviewed" || event.reaction == "approved") {
-      const result = await MongoDB.find(event.item.channel, {"pr_post_id": event.item.ts})
-      if(result) {
+  const OPEN = "open";
+  const REVIEWED = "reviewed";
+  const APPROVED = "approved";
+  
+  if(event.reaction == REVIEWED || event.reaction == APPROVED) {
+      const dbEntry = await MongoDB.find(event.item.channel, {"pr_post_id": event.item.ts})
+      if(dbEntry) {
         client.chat.postMessage({
         token: process.env.SLACK_BOT_TOKEN,
-        channel: result[0].author,
+        channel: dbEntry[0].author,
         text: `Your PR was ${event.reaction} by <@${event.user}>`
       })
         
       switch(event.reaction) {
-          case("reviewed"):
-            
+          case(REVIEWED):
+            if (dbEntry.status == OPEN) await MongoDB.updateStatus(dbEntry._id, REVIEWED);
           break;
-          case("approved"):
+          case(APPROVED):
+            if (dbEntry.status == REVIEWED || dbEntry.status == OPEN) await MongoDB.updateStatus(dbEntry._id, APPROVED)
           break;
       }
     } 

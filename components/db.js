@@ -59,7 +59,17 @@ class MongoDB {
     
   }
   
-  static async update()
+  static async updateStatus(channel_id, id, status) {
+    const client = createClient();
+    try {
+      await client.connect();
+      await client.db().collection(channel_id).findOneAndUpdate({"_id": id},{"status": status})
+    } catch (error) {
+      console.log(error)
+    } finally {
+      client.close();
+    }
+  }
   
 }
 
