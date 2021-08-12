@@ -1,5 +1,6 @@
 
 const { MongoClient } = require('mongodb');
+const { EncryptionEngine } = require('../utils/encryption-engine.js');
 
 const password = process.env.ATLAS_PASSWORD;
 const uri = `mongodb+srv://edithAdmin:${password}@edith.vqfcf.mongodb.net/EDITH?retryWrites=true&w=majority`;

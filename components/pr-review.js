@@ -1,6 +1,5 @@
 const { MongoDB } = require("./db.js");
 const { TimeFormatter } = require("../utils/time-formatter.js");
-const { EncryptionEngine } = require("../utils/encryption-engine.js");
 
 class PRReview {
   static async initialModal(ack, payload, context, app) {
@@ -162,7 +161,7 @@ class PRReview {
         pr_post_id: result.message.ts
       };
       //Save to DB
-      await MongoDB.savePR(channel_id, EncryptionEngine.encryptPRPayload(dbObject));
+      await MongoDB.savePR(channel_id, dbObject);
     } catch (error) {
       if (error.data && error.data.errors[0].includes("invalid url")) {
         app.client.chat.postEphemeral({
