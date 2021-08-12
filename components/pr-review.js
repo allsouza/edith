@@ -201,15 +201,17 @@ class PRReview {
           case("approved"):
             emoji = "approved";
             break;
-          case("open"):
-            emoji = ""
-          
+          default:
+            emoji = "hourglass_flowing_sand"
+            break;
       }
+      
+      const timeDif
       blocks.push({
         type: "section",
         text: {
           type: "mrkdwn",
-          text: `<@${entry.author}>'s ${entry.service} PR to ${entry.summary}'`
+          text: `:${emoji}: \t <@${entry.author}>'s ${entry.service} PR to ${entry.summary}'`
         },
         accessory: {
           type: "button",
