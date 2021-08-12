@@ -5,7 +5,7 @@ class TimeFormatter {
     
     let elapsedTime = (end - start) / 1000;
     let result = "Created ";
-    debugger
+    
     if(elapsedTime < 60) {
       result += `${Math.floor(elapsedTime)} seconds ago`;
     } else if(elapsedTime < 7200) {

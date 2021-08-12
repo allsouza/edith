@@ -216,7 +216,7 @@ class PRReview {
         type: "section",
         text: {
           type: "mrkdwn",
-          text: `<${entry.author}>'s ${entry.service} review request:`
+          text: `<@${entry.author}>'s ${entry.service} review request:`
         }
       });
 
@@ -229,7 +229,7 @@ class PRReview {
           },
           {
             type: "mrkdwn",
-            text: `*Status:*\n${emoji} \t${entry.status}`
+            text: `*Status:*\n:${emoji}: \t${entry.status}`
           },
           {
             type: "mrkdwn",
@@ -242,44 +242,44 @@ class PRReview {
         ]
       });
 
-      blocks.push({
-        type: "actions",
-        elements: [
-          {
-            type: "button",
-            text: {
-              type: "plain_text",
-              emoji: true,
-              text: ":eyes: Take a look "
-            },
-            value: "view",
-            url: `${entry.link}`,
-            action_id: "open-pr-action"
-          },
-          {
-            type: "button",
-            text: {
-              type: "plain_text",
-              emoji: true,
-              text: ":approved: Approve"
-            },
-            style: "primary",
-            value: "approve",
-            action_id: "open-pr-action"
-          },
-          {
-            type: "button",
-            text: {
-              type: "plain_text",
-              emoji: true,
-              text: ":reviewed: Review"
-            },
-            style: "danger",
-            value: "review",
-            action_id: "open-pr-action"
-          }
-        ]
-      });
+      // blocks.push({
+      //   type: "actions",
+      //   elements: [
+      //     {
+      //       type: "button",
+      //       text: {
+      //         type: "plain_text",
+      //         emoji: true,
+      //         text: ":eyes: Take a look "
+      //       },
+      //       value: "view",
+      //       url: `${entry.link}`,
+      //       action_id: "open-pr-action"
+      //     },
+      //     {
+      //       type: "button",
+      //       text: {
+      //         type: "plain_text",
+      //         emoji: true,
+      //         text: ":approved: Approve"
+      //       },
+      //       style: "primary",
+      //       value: "approve",
+      //       action_id: "open-pr-action"
+      //     },
+      //     {
+      //       type: "button",
+      //       text: {
+      //         type: "plain_text",
+      //         emoji: true,
+      //         text: ":reviewed: Review"
+      //       },
+      //       style: "danger",
+      //       value: "review",
+      //       action_id: "open-pr-action"
+      //     }
+      //   ]
+      // });
 
       // blocks.push({
       //   type: "section",

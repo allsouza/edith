@@ -12,8 +12,6 @@ class MongoDB {
     try {
       await client.connect();
       const dbList = await client.db().admin().listDatabases();
-      debugger
-      console.log(dbList)
     } catch(error) {
       console.error(error);
     } finally {
@@ -39,9 +37,7 @@ class MongoDB {
     try {
       await client.connect();
       let result = await client.db().collection(channel_id).find().toArray();
-      debugger
       result = result.map(entry => EncryptionEngine.decryptPRPayload(entry))
-      debugger
       return result;
     } catch (error) {
       console.error(error)
