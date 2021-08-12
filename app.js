@@ -27,6 +27,16 @@ app.view('pr_review_modal_view', ({ ack, body, view }) => {
 app.action('link-button-action', ({ ack }) => ack());
 
 app.event('reaction_added', async ({ event, client }) => {
+  const result = await MongoDB.find(event.item.channel, {"pr_post_id": event.item.ts})
+  debugger
+  switch(event.reaction) {
+    case "approved":
+      console.log("approved")
+      break;
+    case "reviewed":
+      console.log("reviewed")
+      break
+  }
   client.chat.postMessage({
     token: process.env.SLACK_BOT_TOKEN,
     channel: event.item.channel,

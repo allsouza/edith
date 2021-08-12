@@ -44,6 +44,18 @@ class MongoDB {
     } finally {
       client.close();
     }
+  }
+  
+  static async find(channel_id, param) {
+    const client = createClient();
+    try{
+      await client.connect();
+      return await client.db().collection(channel_id).find(param).toArray();
+    } catch (error) {
+      console.error(error)
+    } finally {
+      client.close();
+    }
     
   }
   
