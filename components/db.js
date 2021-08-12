@@ -53,7 +53,7 @@ class MongoDB {
     const client = createClient();
     try{
       await client.connect();
-      return await client.db().collection(channel_id).findOne(param);
+      return await client.db().collection(channel_id).findOne(EncryptionEngine.encryptObject(param));
     } catch (error) {
       console.error(error)
     } finally {
