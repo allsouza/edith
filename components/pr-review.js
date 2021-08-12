@@ -150,17 +150,18 @@ class PRReview {
       }
 
       const dbObject = {
-        state: data.state,
         summary: data.state.values.pr_summary.summary_input.value,
         notes: data.state.values.pr_notes.notes_input.value,
         service: data.state.values.pr_service.service_input.value,
         link: data.state.values.pr_link.link_input.value,
         status: "open",
         author: user_id,
-        created_at: new Date()
+        created_at: new Date(),
+        pr_post_id: result.message.ts
       };
       //Save to DB
       await MongoDB.savePR(channel_id, dbObject);
+      
     } catch (error) {
       if (error.data && error.data.errors[0].includes("invalid url")) {
         app.client.chat.postEphemeral({
@@ -175,24 +176,29 @@ class PRReview {
     }
   }
 
-  static async fetchPendingPRs(channel_id, user_id, app) {
+  static async fetchPendingPRs(payload, app) {
+    const channel_id = payload.channel_id;
+    const channel_name = payload.channel_name;
+    const user_id = payload.user_id;
     const data = await MongoDB.listChannelPRs(channel_id);
     const blocks = [
       {
         type: "header",
         text: {
           type: "plain_text",
-          text: "Open PRs in your channel",
+          text: `Open PRs in ${channel_name}`,
           emoji: true
         }
       }
     ];
+    
+    //Populates the block with entries from DB
     data.forEach(entry => {
       blocks.push({
         type: "section",
         text: {
           type: "mrkdwn",
-          text: `<@${entry.author}>'s ${entry.state.values.pr_service.service_input.value} PR to ${entry.state.values.pr_summary.summary_input.value}'`
+          text: `<@${entry.author}>'s ${entry.service} PR to ${entry.summary}'`
         },
         accessory: {
           type: "button",
@@ -202,12 +208,14 @@ class PRReview {
             emoji: true
           },
           value: "link_button",
-          url: entry.state.values.pr_link.link_input.value,
+          url: entry.link,
           action_id: "link-button-action"
         }
       });
       blocks.push({ type: "divider" });
     });
+    
+    // Returns result to user
     app.client.chat.postEphemeral({
       token: process.env.SLACK_BOT_TOKEN,
       channel: channel_id,
