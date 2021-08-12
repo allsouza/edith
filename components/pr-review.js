@@ -161,7 +161,6 @@ class PRReview {
       };
       //Save to DB
       await MongoDB.savePR(channel_id, dbObject);
-      
     } catch (error) {
       if (error.data && error.data.errors[0].includes("invalid url")) {
         app.client.chat.postEphemeral({
@@ -191,7 +190,7 @@ class PRReview {
         }
       }
     ];
-    
+
     //Populates the block with entries from DB
     data.forEach(entry => {
       blocks.push({
@@ -214,7 +213,7 @@ class PRReview {
       });
       blocks.push({ type: "divider" });
     });
-    
+
     // Returns result to user
     app.client.chat.postEphemeral({
       token: process.env.SLACK_BOT_TOKEN,
@@ -222,6 +221,37 @@ class PRReview {
       blocks: blocks,
       user: user_id
     });
+  }
+
+  static async computeReaction(event, client) {
+    const OPEN = "open";
+    const REVIEWED = "reviewed";
+    const APPROVED = "approved";
+    const channel = event.item.channel;
+
+    if (event.reaction == REVIEWED || event.reaction == APPROVED) {
+      const dbEntry = await MongoDB.find(channel, {
+        pr_post_id: event.item.ts
+      });
+      if (dbEntry) {
+        client.chat.postMessage({
+          token: process.env.SLACK_BOT_TOKEN,
+          channel: dbEntry.author,
+          text: `:${event.reaction}: Your PR was ${event.reaction} by <@${event.user}>`
+        });
+
+        switch (event.reaction) {
+          case REVIEWED:
+            if (dbEntry.status == OPEN)
+              await MongoDB.updateStatus(channel, dbEntry._id, REVIEWED);
+            break;
+          case APPROVED:
+            if (dbEntry.status == REVIEWED || dbEntry.status == OPEN)
+              await MongoDB.updateStatus(channel, dbEntry._id, APPROVED);
+            break;
+        }
+      }
+    }
   }
 }
 

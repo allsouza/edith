@@ -63,8 +63,7 @@ class MongoDB {
     const client = createClient();
     try {
       await client.connect();
-      const result = await client.db().collection(channel_id).updateOne({"_id": id},{$set: {"status": status}})
-      console.log(result);
+      await client.db().collection(channel_id).updateOne({"_id": id},{$set: {"status": status}});
     } catch (error) {
       console.log(error)
     } finally {
