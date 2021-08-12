@@ -27,6 +27,12 @@ app.action('link-button-action', ({ ack }) => ack());
 
 app.event('reaction_added', async ({ event, client }) => {
   debugger
+  client.chat.postMessage({
+    token: process.env.SLACK_BOT_TOKEN,
+    channel: event.item.channel,
+    text: "Hi there",
+    thread_ts: event.item.ts
+  })
   console.log(event);
 });
 
