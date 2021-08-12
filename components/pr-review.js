@@ -195,20 +195,23 @@ class PRReview {
     //Populates the block with entries from DB
     data.forEach(entry => {
       let emoji;
-      switch(entry.status) {
-          case("reviewed"):
-            emoji = "reviewed";
-            break;
-          case("approved"):
-            emoji = "approved";
-            break;
-          default:
-            emoji = "hourglass_flowing_sand"
-            break;
+      switch (entry.status) {
+        case "reviewed":
+          emoji = "reviewed";
+          break;
+        case "approved":
+          emoji = "approved";
+          break;
+        default:
+          emoji = "hourglass_flowing_sand";
+          break;
       }
-      
-      const timeElapsed = TimeFormatter.getDifference(entry.created_at, new Date());
-      
+
+      const timeElapsed = TimeFormatter.getDifference(
+        entry.created_at,
+        new Date()
+      );
+
       blocks.push({
         type: "section",
         text: {
@@ -226,6 +229,38 @@ class PRReview {
           url: entry.link,
           action_id: "link-button-action"
         }
+      });
+      blocks.push({
+        type: "actions",
+        elements: [
+          {
+            type: "static_select",
+            placeholder: {
+              type: "plain_text",
+              text: "Select an action",
+              emoji: true
+            },
+            options: [
+              {
+                text: {
+                  type: "plain_text",
+                  text: ":reviewed: Mark as reviewed",
+                  emoji: true
+                },
+                value: "reviewed"
+              },
+              {
+                text: {
+                  type: "plain_text",
+                  text: ":approved: Mark as approved",
+                  emoji: true
+                },
+                value: "approved"
+              }
+            ],
+            action_id: "review-action"
+          }
+        ]
       });
       blocks.push({ type: "divider" });
     });
@@ -270,10 +305,8 @@ class PRReview {
       }
     }
   }
-  
-  static async mergedPR() {
-    
-  }
+
+  static async mergedPR() {}
 }
 
 module.exports = { PRReview };
