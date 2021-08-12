@@ -1,9 +1,9 @@
 const CrytoJS = require('crypto-js');
 
 class Encrypter {
-  static function encryptPayload(payload) => {
+  static encryptPayload(payload) {
     
   }
 }
 
-module.exports = {Encrypter};
+module.exports = { Encrypter };
