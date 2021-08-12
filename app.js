@@ -30,22 +30,23 @@ app.event('reaction_added', async ({ event, client }) => {
   const OPEN = "open";
   const REVIEWED = "reviewed";
   const APPROVED = "approved";
+  const channel = event.item.channel;
   
   if(event.reaction == REVIEWED || event.reaction == APPROVED) {
-      const dbEntry = await MongoDB.find(event.item.channel, {"pr_post_id": event.item.ts})
+      const dbEntry = await MongoDB.find(channel, {"pr_post_id": event.item.ts})
       if(dbEntry) {
         client.chat.postMessage({
         token: process.env.SLACK_BOT_TOKEN,
-        channel: dbEntry[0].author,
+        channel: dbEntry.author,
         text: `Your PR was ${event.reaction} by <@${event.user}>`
       })
-        
+      
       switch(event.reaction) {
           case(REVIEWED):
-            if (dbEntry.status == OPEN) await MongoDB.updateStatus(dbEntry._id, REVIEWED);
+            if (dbEntry.status == OPEN) await MongoDB.updateStatus(channel, dbEntry._id, REVIEWED);
           break;
           case(APPROVED):
-            if (dbEntry.status == REVIEWED || dbEntry.status == OPEN) await MongoDB.updateStatus(dbEntry._id, APPROVED)
+            if (dbEntry.status == REVIEWED || dbEntry.status == OPEN) await MongoDB.updateStatus(channel, dbEntry._id, APPROVED)
           break;
       }
     } 

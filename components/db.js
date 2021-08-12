@@ -50,7 +50,7 @@ class MongoDB {
     const client = createClient();
     try{
       await client.connect();
-      return await client.db().collection(channel_id).find(param).toArray();
+      return await client.db().collection(channel_id).findOne(param);
     } catch (error) {
       console.error(error)
     } finally {
@@ -63,7 +63,8 @@ class MongoDB {
     const client = createClient();
     try {
       await client.connect();
-      await client.db().collection(channel_id).findOneAndUpdate({"_id": id},{"status": status})
+      const result = await client.db().collection(channel_id).updateOne({"_id": id},{$set: {"status": status}})
+      console.log(result);
     } catch (error) {
       console.log(error)
     } finally {
