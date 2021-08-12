@@ -150,9 +150,14 @@ class PRReview {
       }
 
       const dbObject = {
-        ...data,
+        state: data.state,
+        summary: data.state.values.pr_summary.summary_input.value,
+        notes: data.state.values.pr_notes.notes_input.value,
+        service: data.state.values.pr_service.service_input.value,
+        link: data.state.values.pr_link.link_input.value,
         status: "open",
-        author: user_id
+        author: user_id,
+        created_at: new Date()
       };
       //Save to DB
       await MongoDB.savePR(channel_id, dbObject);
