@@ -39,6 +39,7 @@ class MongoDB {
     try {
       await client.connect();
       let result = await client.db().collection(channel_id).find().toArray();
+      debugger
       result = result.map(entry => EncryptionEngine.decryptPRPayload(entry))
       debugger
       return result;
@@ -49,11 +50,11 @@ class MongoDB {
     }
   }
   
-  static async find(channel_id, param) {
+  static async findPR(channel_id, post_id) {
     const client = createClient();
     try{
       await client.connect();
-      return await client.db().collection(channel_id).findOne(EncryptionEngine.encryptObject(param));
+      return await client.db().collection(channel_id).findOne({pr_post_id: post_id});
     } catch (error) {
       console.error(error)
     } finally {

@@ -282,9 +282,7 @@ class PRReview {
     const channel = event.item.channel;
 
     if (event.reaction == REVIEWED || event.reaction == APPROVED) {
-      const dbEntry = await MongoDB.find(channel, {
-        pr_post_id: event.item.ts
-      });
+      const dbEntry = await MongoDB.findPR(channel, event.item.ts);
       if (dbEntry) {
         client.chat.postMessage({
           token: process.env.SLACK_BOT_TOKEN,

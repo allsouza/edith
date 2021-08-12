@@ -17,9 +17,9 @@ class EncryptionEngine {
       service: encrypt(payload.service),
       link: encrypt(payload.link),
       status: payload.status,
-      author: encrypt(payload.author),
+      author: payload.author,
       created_at: payload.created_at,
-      pr_post_id: encrypt(payload.pr_post_id)
+      pr_post_id: payload.pr_post_id
     };
 
     return encrypted;
