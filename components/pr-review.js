@@ -213,7 +213,7 @@ class PRReview {
         type: "section",
         text: {
           type: "mrkdwn",
-          text: `:${emoji}: \t <@${entry.author}>'s ${entry.service} PR to ${entry.summary}' \n _${timeElapsed}_`
+          text: `:${emoji}: \t <@${entry.author}>'s ${entry.service} PR to ${entry.summary} \n _${timeElapsed}_`
         },
         accessory: {
           type: "button",
@@ -235,6 +235,7 @@ class PRReview {
       token: process.env.SLACK_BOT_TOKEN,
       channel: channel_id,
       blocks: blocks,
+      text: "Pending PRs should appear here",
       user: user_id
     });
   }
@@ -268,6 +269,10 @@ class PRReview {
         }
       }
     }
+  }
+  
+  static async mergedPR() {
+    
   }
 }
 

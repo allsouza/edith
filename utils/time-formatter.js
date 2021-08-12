@@ -7,7 +7,7 @@ class TimeFormatter {
     let result = "Created ";
     debugger
     if(elapsedTime < 60) {
-      result += `${elapsedTime} seconds ago`;
+      result += `${Math.floor(elapsedTime)} seconds ago`;
     } else if(elapsedTime < 7200) {
       result += `${Math.floor(elapsedTime/60)} minutes ago`
     } else {
