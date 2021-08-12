@@ -10,7 +10,7 @@ function decrypt(text) {
 }
 
 class EncryptionEngine {
-  static encryptPayload(payload) {
+  static encryptPRPayload(payload) {
     const encrypted = {
       summary: encrypt(payload.summary),
       notes: encrypt(payload.notes),
@@ -25,7 +25,7 @@ class EncryptionEngine {
     return encrypted;
   }
 
-  static decryptPayload(payload) {
+  static decryptPRPayload(payload) {
     const decrypted = {
       summary: decrypt(payload.summary),
       notes: decrypt(payload.notes),
