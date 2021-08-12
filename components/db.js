@@ -25,7 +25,7 @@ class MongoDB {
     const client = createClient();
     try {
       await client.connect();
-      const result = await client.db().collection(collectionName).insertOne(data);
+      const result = await client.db().collection(collectionName).insertOne(EncryptionEngine.encryptPRPayload(data));
       console.log(`PR saved to MongoDB with id: ${result.insertedId}`);
     } catch (error) {
       console.error(error);

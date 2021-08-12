@@ -25,6 +25,10 @@ app.view("pr_review_modal_view", ({ ack, body, view }) => {
 
 app.action("link-button-action", ({ ack }) => ack());
 
+app.action("take-action-button", ({ ack, body, context }) => {
+  
+});
+
 app.action("review-action", ({ ack, body, context}) => {
   ack();
   debugger

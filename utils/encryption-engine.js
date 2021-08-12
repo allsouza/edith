@@ -33,9 +33,9 @@ class EncryptionEngine {
       service: decrypt(payload.service),
       link: decrypt(payload.link),
       status: payload.status,
-      author: decrypt(payload.author),
+      author: payload.author,
       created_at: payload.created_at,
-      pr_post_id: decrypt(payload.pr_post_id)
+      pr_post_id: payload.pr_post_id
     };
 
     return decrypted;

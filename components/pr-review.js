@@ -222,46 +222,46 @@ class PRReview {
           type: "button",
           text: {
             type: "plain_text",
-            text: "Take a look :eyes:",
+            text: "Take Action",
             emoji: true
           },
-          value: "link_button",
+          value: "take_action_button",
           url: entry.link,
-          action_id: "link-button-action"
+          action_id: "take-action-button"
         }
       });
-      blocks.push({
-        type: "actions",
-        elements: [
-          {
-            type: "static_select",
-            placeholder: {
-              type: "plain_text",
-              text: "Select an action",
-              emoji: true
-            },
-            options: [
-              {
-                text: {
-                  type: "plain_text",
-                  text: ":reviewed: Mark as reviewed",
-                  emoji: true
-                },
-                value: "reviewed"
-              },
-              {
-                text: {
-                  type: "plain_text",
-                  text: ":approved: Mark as approved",
-                  emoji: true
-                },
-                value: "approved"
-              }
-            ],
-            action_id: "review-action"
-          }
-        ]
-      });
+      // blocks.push({
+      //   type: "actions",
+      //   elements: [
+      //     {
+      //       type: "static_select",
+      //       placeholder: {
+      //         type: "plain_text",
+      //         text: "Select an action",
+      //         emoji: true
+      //       },
+      //       options: [
+      //         {
+      //           text: {
+      //             type: "plain_text",
+      //             text: ":reviewed: Mark as reviewed",
+      //             emoji: true
+      //           },
+      //           value: "reviewed"
+      //         },
+      //         {
+      //           text: {
+      //             type: "plain_text",
+      //             text: ":approved: Mark as approved",
+      //             emoji: true
+      //           },
+      //           value: "approved"
+      //         }
+      //       ],
+      //       action_id: "review-action"
+      //     }
+      //   ]
+      // });
       blocks.push({ type: "divider" });
     });
 
