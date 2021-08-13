@@ -225,11 +225,11 @@ class PRReview {
         fields: [
           {
             type: "mrkdwn",
-            text: `*Summary:*\n${entry.summary}`
+            text: `*Status:*\n:${emoji}: \t${entry.status}`
           },
           {
             type: "mrkdwn",
-            text: `*Status:*\n:${emoji}: \t${entry.status}`
+            text: `*Summary:*\n${entry.summary}`
           },
           {
             type: "mrkdwn",
@@ -242,63 +242,44 @@ class PRReview {
         ]
       });
 
-      // blocks.push({
-      //   type: "actions",
-      //   elements: [
-      //     {
-      //       type: "button",
-      //       text: {
-      //         type: "plain_text",
-      //         emoji: true,
-      //         text: ":eyes: Take a look "
-      //       },
-      //       value: "view",
-      //       url: `${entry.link}`,
-      //       action_id: "open-pr-action"
-      //     },
-      //     {
-      //       type: "button",
-      //       text: {
-      //         type: "plain_text",
-      //         emoji: true,
-      //         text: ":approved: Approve"
-      //       },
-      //       style: "primary",
-      //       value: "approve",
-      //       action_id: "open-pr-action"
-      //     },
-      //     {
-      //       type: "button",
-      //       text: {
-      //         type: "plain_text",
-      //         emoji: true,
-      //         text: ":reviewed: Review"
-      //       },
-      //       style: "danger",
-      //       value: "review",
-      //       action_id: "open-pr-action"
-      //     }
-      //   ]
-      // });
-
-      // blocks.push({
-      //   type: "section",
-      //   text: {
-      //     type: "mrkdwn",
-      //     text: `:${emoji}: \t <@${entry.author}>'s ${entry.service} PR to ${entry.summary} \n _${timeElapsed}_`
-      //   },
-      //   accessory: {
-      //     type: "button",
-      //     text: {
-      //       type: "plain_text",
-      //       text: "Take Action",
-      //       emoji: true
-      //     },
-      //     value: {"post_id": entry.pr_post_id},
-      //     url: entry.link,
-      //     action_id: "take-action-button"
-      //   }
-      // });
+      blocks.push({
+        type: "actions",
+        elements: [
+          {
+            type: "button",
+            text: {
+              type: "plain_text",
+              emoji: true,
+              text: ":eyes: Take a look "
+            },
+            value: "view",
+            url: `${entry.link}`,
+            action_id: "open-pr-action"
+          },
+          {
+            type: "button",
+            text: {
+              type: "plain_text",
+              emoji: true,
+              text: ":approved: Approve"
+            },
+            style: "primary",
+            value: "approve",
+            action_id: "approve-pr-action"
+          } ,
+          {
+            type: "button",
+            text: {
+              type: "plain_text",
+              emoji: true,
+              text: ":reviewed: Review"
+            },
+            style: "danger",
+            value: "review",
+            action_id: "deny-pr-action"
+          }
+        ]
+      });
 
       blocks.push({ type: "divider" });
     });
