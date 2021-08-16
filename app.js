@@ -28,7 +28,7 @@ app.action("link-button-action", ({ ack }) => ack());
 app.action("review-pr-action", ({ ack, body, context }) => {
   ack();
   debugger
-  console.log(body);
+  console.log(body.action.value);
 });
 
 app.action("review-action", ({ ack, body, payload, context}) => {

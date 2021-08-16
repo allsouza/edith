@@ -275,7 +275,7 @@ class PRReview {
               text: ":reviewed: Review"
             },
             style: "danger",
-            value: entry,
+            value: entry.pr_post_id,
             action_id: "review-pr-action"
           }
         ]
@@ -283,7 +283,7 @@ class PRReview {
 
       blocks.push({ type: "divider" });
     });
-debugger
+    
     // Returns result to user
     app.client.chat.postEphemeral({
       token: process.env.SLACK_BOT_TOKEN,
