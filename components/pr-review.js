@@ -207,7 +207,7 @@ class PRReview {
           break;
       }
 
-      const createdAt = TimeFormatter.getDifference(
+      const createdAt = TimeFormatter.createdAt(
         entry.created_at,
         new Date()
       );
@@ -254,7 +254,7 @@ class PRReview {
             },
             value: "view",
             url: `${entry.link}`,
-            action_id: "open-pr-action"
+            action_id: "link-button-action"
           },
           {
             type: "button",
@@ -324,7 +324,6 @@ debugger
   }
 
   static async takeAction(body, client) {
-    debugger
     const event = {
       reaction: body.actions[0].action_id.includes("review") ? "reviewed" : "approved",
       item: {
@@ -333,7 +332,6 @@ debugger
       },
       user: body.user.id
     }
-    debugger
     this.computeReaction(event, client);
   }
 

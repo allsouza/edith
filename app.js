@@ -35,12 +35,6 @@ app.action("approve-pr-action", ({ ack, body, client }) => {
   PRReview.takeAction(body, client);
 });
 
-app.action("review-action", ({ ack, body, payload, context}) => {
-  ack();
-  debugger
-  console.log("Hi")
-})
-
 app.event("reaction_added", async ({ event, client }) => {
   PRReview.computeReaction(event, client);
 });
