@@ -155,7 +155,7 @@ class PRReview {
         });
       }
 
-      app.client.chat.postMessage({
+      app.client.chat.postEphemeral({
         token: token,
         channel: channel_id,
         thread_ts: result.message.ts,
@@ -272,43 +272,59 @@ class PRReview {
         ]
       });
 
+      const buttons = [
+        {
+          type: "button",
+          text: {
+            type: "plain_text",
+            emoji: true,
+            text: ":eyes: Take a look "
+          },
+          value: "view",
+          url: `${entry.link}`,
+          action_id: "link-button-action"
+        }
+      ];
+
+      if (entry.author == payload.user_id) {
+        buttons.push({
+          type: "button",
+          text: {
+            type: "plain_text",
+            emoji: true,
+            text: ":white_check_mark: Merged"
+          },
+          style: "primary",
+          value: entry.pr_post_id,
+          action_id: "merged-button-action"
+        });
+      } else {
+        buttons.push({
+          type: "button",
+          text: {
+            type: "plain_text",
+            emoji: true,
+            text: ":approved: Approve"
+          },
+          style: "primary",
+          value: entry.pr_post_id,
+          action_id: "approve-pr-action"
+        });
+        buttons.push({
+          type: "button",
+          text: {
+            type: "plain_text",
+            emoji: true,
+            text: ":reviewed: Review"
+          },
+          style: "danger",
+          value: entry.pr_post_id,
+          action_id: "review-pr-action"
+        });
+      }
       blocks.push({
         type: "actions",
-        elements: [
-          {
-            type: "button",
-            text: {
-              type: "plain_text",
-              emoji: true,
-              text: ":eyes: Take a look "
-            },
-            value: "view",
-            url: `${entry.link}`,
-            action_id: "link-button-action"
-          },
-          {
-            type: "button",
-            text: {
-              type: "plain_text",
-              emoji: true,
-              text: ":approved: Approve"
-            },
-            style: "primary",
-            value: entry.pr_post_id,
-            action_id: "approve-pr-action"
-          },
-          {
-            type: "button",
-            text: {
-              type: "plain_text",
-              emoji: true,
-              text: ":reviewed: Review"
-            },
-            style: "danger",
-            value: entry.pr_post_id,
-            action_id: "review-pr-action"
-          }
-        ]
+        elements: buttons
       });
 
       blocks.push({ type: "divider" });
@@ -369,8 +385,7 @@ class PRReview {
       body.channel.id,
       body.actions[0].value
     );
-    debugger;
-    if (dbEntry.author != body.user.id) {
+    if (dbEntry.author == body.user.id) {
       await MongoDB.finalizePR(body.channel.id, body.actions[0].value);
       client.chat.postMessage({
         token: process.env.SLACK_BOT_TOKEN,
@@ -381,9 +396,10 @@ class PRReview {
     } else {
       client.chat.postEphemeral({
         token: process.env.SLACK_BOT_TOKEN,
-        text: ":red_flag: Only the author can set as Merged",
+        text: ":octagonal_sign: Only the author can set as Merged",
         channel: body.channel.id,
-        thread_ts: body.actions[0].value
+        thread_ts: body.actions[0].value,
+        user: body.user.id
       });
     }
   }
