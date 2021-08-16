@@ -77,7 +77,7 @@ class MongoDB {
     let result;
     try {
       await client.connect();
-      const data = await client.db().collection(channel_id).findOneAndDelete({"pr_post_id": id});
+      const data = await client.db().collection(channel_id).findOne({"pr_post_id": id});
       debugger
       const statsExist = await client.db().collection(`${channel_id}_stats`).count() > 0;
       let statsData;
@@ -93,7 +93,7 @@ class MongoDB {
         result = await client.db().collection(`${channel_id}_stats`).insertOne(statsData);
         debugger
       }
-      console.log(result);
+      return data;
     } catch (error) {
       console.error(error)
     } finally {

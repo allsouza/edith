@@ -365,7 +365,13 @@ class PRReview {
   }
 
   static async mergedPR(body, client) {
+    debugger
     const dbEntry = MongoDB.finalizePR(body.channel.id, body.actions[0].value);
+    client.chat.postMessage({
+      token: process.env.SLACK_BOT_TOKEN,
+      text: "Merged PR",
+      channel: dbEntry.pr_post_id
+    })
   }
 }
 
