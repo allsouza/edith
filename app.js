@@ -34,11 +34,13 @@ app.action("review-pr-action", ({ ack, body, client }) => {
   PRReview.takeAction(body, client);
 });
 
+// Flow to set PR Review as APPROVED from /view_prs command
 app.action("approve-pr-action", ({ ack, body, client }) => {
   ack();
   PRReview.takeAction(body, client);
 });
 
+// Listens for when reactins are added and acts if :approved: or :reviewed:
 app.event("reaction_added", async ({ event, client }) => {
   PRReview.computeReaction(event, client);
 });
