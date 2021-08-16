@@ -16,6 +16,11 @@ class TimeFormatter {
     
     return result;
   }
+  
+  static createdAtString(start, end) {
+    const elapsedTime = this.getDifference(start, end);
+    
+  }
 }
 
 module.exports = { TimeFormatter }

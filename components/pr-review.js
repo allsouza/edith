@@ -186,7 +186,7 @@ class PRReview {
         type: "header",
         text: {
           type: "plain_text",
-          text: `Open PRs in ${channel_name}`,
+          text: `Open PR Reviews in ${channel_name}`,
           emoji: true
         }
       }
@@ -264,7 +264,7 @@ class PRReview {
               text: ":approved: Approve"
             },
             style: "primary",
-            value: "approve",
+            value: entry.pr_post_id,
             action_id: "approve-pr-action"
           } ,
           {
