@@ -26,11 +26,13 @@ class TimeFormatter {
   static avgClosingTime(dbData, prData) {
     let count = 0;
     let avg = 0;
+    debugger
     if(dbData){
       count = dbData.count;
       avg = dbData.avg_close_in_secs;
     }
     const timeElapsed = (new Date() - new Date(prData.created_at)) / 1000;
+    debugger
     return Math.floor(((count * avg) + timeElapsed)/(count+1));
   }
 }
