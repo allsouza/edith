@@ -116,7 +116,7 @@ class PRReview {
       data.state.values.channel_select.channel_select.selected_conversation;
 
     try {
-      const message = `:bitbucket: *Hey team, please review this ${service} PR for <@${user_id}>*. :bitbucket: \n _Summary: ${summary}_`;
+      const message = `:bitbucket: *Hey team, please review this ${service} PR for <@${user_id}>*.\n _Summary: ${summary}_`;
 
       const result = await app.client.chat.postMessage({
         token: token,
@@ -159,6 +159,7 @@ class PRReview {
         token: token,
         channel: channel_id,
         thread_ts: result.message.ts,
+        user: user_id,
         blocks: [
           {
             type: "section",
@@ -171,9 +172,10 @@ class PRReview {
               type: "button",
               text: {
                 type: "plain_text",
-                text: "Merged",
-                emoji: true
+                emoji: true,
+                text: ":white_check_mark: Merged"
               },
+              style: "primary",
               value: result.message.ts,
               action_id: "merged-button-action"
             }
@@ -385,6 +387,7 @@ class PRReview {
       body.channel.id,
       body.actions[0].value
     );
+    if(!dbEntry) return;
     if (dbEntry.author == body.user.id) {
       await MongoDB.finalizePR(body.channel.id, body.actions[0].value);
       client.chat.postMessage({
