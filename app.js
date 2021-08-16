@@ -27,7 +27,11 @@ app.action("link-button-action", ({ ack }) => ack());
 
 app.action("review-pr-action", ({ ack, body, client }) => {
   ack();
-  debugger
+  PRReview.takeAction(body, client);
+});
+
+app.action("approve-pr-action", ({ ack, body, client }) => {
+  ack();
   PRReview.takeAction(body, client);
 });
 

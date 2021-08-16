@@ -299,7 +299,7 @@ class PRReview {
     const REVIEWED = "reviewed";
     const APPROVED = "approved";
     const channel = event.item.channel;
-
+debugger
     if (event.reaction == REVIEWED || event.reaction == APPROVED) {
       const dbEntry = await MongoDB.findPR(channel, event.item.ts);
       if (dbEntry) {
@@ -329,10 +329,11 @@ class PRReview {
       reaction: body.actions[0].action_id.includes("review") ? "reviewed" : "approved",
       item: {
         ts: body.actions[0].value,
+        channel: body.channel.id
       },
       user: body.user.id
     }
-    
+    debugger
     this.computeReaction(event, client);
   }
 
