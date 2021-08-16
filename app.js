@@ -40,6 +40,12 @@ app.action("approve-pr-action", ({ ack, body, client }) => {
   PRReview.takeAction(body, client);
 });
 
+// Deletes the PR Review from DB and calculates stats
+app.action("merged-button-action", ({ ack, body, client }) => {
+  ack();
+  PRReview.mergedPR(body, client);
+})
+
 // Listens for when reactins are added and acts if :approved: or :reviewed:
 app.event("reaction_added", async ({ event, client }) => {
   PRReview.computeReaction(event, client);

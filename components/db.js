@@ -71,6 +71,18 @@ class MongoDB {
     }
   }
   
+  static async finalizePR(channel_id, id) {
+    const client = createClient();
+    try {
+      await client.connect();
+      const data = client.db().collection(channel_id).findOne({"_id": id});
+    } catch (error) {
+      console.error(error)
+    } finally {
+      client.close();
+    }
+  }
+  
 }
 
 module.exports = { MongoDB };

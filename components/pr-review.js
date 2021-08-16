@@ -154,11 +154,32 @@ class PRReview {
           text: `PR Notes: ${notes}`
         });
       }
-      
+
       app.client.chat.postMessage({
         token: token,
-        cha
-      })
+        channel: channel_id,
+        thread_ts: result.message.ts,
+        blocks: [
+          {
+            type: "section",
+            text: {
+              type: "mrkdwn",
+              text:
+                "Once your PR is merged click the *Merged* button to close the PR Review request."
+            },
+            accessory: {
+              type: "button",
+              text: {
+                type: "plain_text",
+                text: "Merged",
+                emoji: true
+              },
+              value: result.message.ts,
+              action_id: "merged-button-action"
+            }
+          }
+        ]
+      });
 
       const dbObject = {
         summary: data.state.values.pr_summary.summary_input.value,
@@ -232,7 +253,9 @@ class PRReview {
         fields: [
           {
             type: "mrkdwn",
-            text: `*Status:*\n:${emoji}: \t${StringUtils.capitalizeFirstLetter(entry.status)}`
+            text: `*Status:*\n:${emoji}: \t${StringUtils.capitalizeFirstLetter(
+              entry.status
+            )}`
           },
           {
             type: "mrkdwn",
@@ -341,7 +364,9 @@ class PRReview {
     this.computeReaction(event, client);
   }
 
-  static async mergedPR() {}
+  static async mergedPR(body, client) {
+    const dbEntry = MongoDB.finalizePR(body.channel.id, body.actions[0].value);
+  }
 }
 
 module.exports = { PRReview };
