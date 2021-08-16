@@ -2,6 +2,7 @@
 const { App } = require("@slack/bolt");
 const { PRReview } = require("./components/pr-review.js");
 const { MongoDB } = require("./components/db.js");
+const { AppHome } = require('./components/app-home.js');
 
 const app = new App({
   token: process.env.SLACK_BOT_TOKEN,
@@ -49,6 +50,10 @@ app.action("merged-button-action", ({ ack, body, client }) => {
 // Listens for when reactins are added and acts if :approved: or :reviewed:
 app.event("reaction_added", async ({ event, client }) => {
   PRReview.computeReaction(event, client);
+});
+
+app.event("app_home_opened", async ({ event, client , context}) => {
+  AppHome.open(event, client, context);
 });
 
 (async () => {
