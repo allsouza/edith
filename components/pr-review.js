@@ -275,8 +275,8 @@ class PRReview {
               text: ":reviewed: Review"
             },
             style: "danger",
-            value: "review",
-            action_id: "deny-pr-action"
+            value: entry,
+            action_id: "review-pr-action"
           }
         ]
       });
