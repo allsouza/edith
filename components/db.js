@@ -75,8 +75,14 @@ class MongoDB {
     const client = createClient();
     try {
       await client.connect();
-      const data = client.db().collection(channel_id).findOneAndDelete({"_id": id});
-      const stats = client.db().collection(`${channel_id}_stats`).count() > 0 ? 
+      const data = await client.db().collection(channel_id).findOneAndDelete({"_id": id});
+      const statsExist = await client.db().collection(`${channel_id}_stats`).count() > 0;
+      if(statsExist) {
+        let statsData = await client.db().collection(`${channel_id}_stats`).findOne();
+        statsData = {
+          
+        }
+      }
     } catch (error) {
       console.error(error)
     } finally {
@@ -84,6 +90,11 @@ class MongoDB {
     }
   }
   
+}
+
+function createStatsData(dbData, prData) {
+  const count = dbData ? dbData.count + 1 : 1;
+  const avgClose = dbData? dbData.avgClose 
 }
 
 module.exports = { MongoDB };

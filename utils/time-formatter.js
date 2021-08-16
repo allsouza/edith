@@ -22,6 +22,11 @@ class TimeFormatter {
     debugger
     return `${new Date(start).toDateString()} _(${elapsedTime})_`;
   }
+  
+  static avgClosingTime(avg, count, start, end) {
+    const timeElapsed = (end - start) / 1000;
+    return Math.floor(((count * avg) + timeElapsed)/(count+1));
+  }
 }
 
 module.exports = { TimeFormatter }
