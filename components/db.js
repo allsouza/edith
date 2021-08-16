@@ -75,7 +75,8 @@ class MongoDB {
     const client = createClient();
     try {
       await client.connect();
-      const data = client.db().collection(channel_id).findOne({"_id": id});
+      const data = client.db().collection(channel_id).findOneAndDelete({"_id": id});
+      const stats = client.db().collection(`${channel_id}_stats`).count() > 0 ? 
     } catch (error) {
       console.error(error)
     } finally {
