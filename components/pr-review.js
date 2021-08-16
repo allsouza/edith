@@ -1,6 +1,10 @@
 const { MongoDB } = require("./db.js");
 const { TimeFormatter } = require("../utils/time-formatter.js");
 
+const OPEN = "open";
+const REVIEWED = "reviewed";
+const APPROVED = "approved";
+
 class PRReview {
   static async initialModal(ack, payload, context, app) {
     // Acknowledge the command request
@@ -207,10 +211,7 @@ class PRReview {
           break;
       }
 
-      const createdAt = TimeFormatter.createdAt(
-        entry.created_at,
-        new Date()
-      );
+      const createdAt = TimeFormatter.createdAt(entry.created_at, new Date());
 
       blocks.push({
         type: "section",
@@ -266,7 +267,7 @@ class PRReview {
             style: "primary",
             value: entry.pr_post_id,
             action_id: "approve-pr-action"
-          } ,
+          },
           {
             type: "button",
             text: {
@@ -283,7 +284,7 @@ class PRReview {
 
       blocks.push({ type: "divider" });
     });
-    
+
     // Returns result to user
     app.client.chat.postEphemeral({
       token: process.env.SLACK_BOT_TOKEN,
@@ -295,11 +296,8 @@ class PRReview {
   }
 
   static async computeReaction(event, client) {
-    const OPEN = "open";
-    const REVIEWED = "reviewed";
-    const APPROVED = "approved";
     const channel = event.item.channel;
-debugger
+    debugger;
     if (event.reaction == REVIEWED || event.reaction == APPROVED) {
       const dbEntry = await MongoDB.findPR(channel, event.item.ts);
       if (dbEntry) {
@@ -325,13 +323,15 @@ debugger
 
   static async takeAction(body, client) {
     const event = {
-      reaction: body.actions[0].action_id.includes("review") ? "reviewed" : "approved",
+      reaction: body.actions[0].action_id.includes("review")
+        ? REVIEWED
+        : APPROVED,
       item: {
         ts: body.actions[0].value,
         channel: body.channel.id
       },
       user: body.user.id
-    }
+    };
     this.computeReaction(event, client);
   }
 
