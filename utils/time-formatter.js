@@ -19,20 +19,17 @@ class TimeFormatter {
   
   static createdAt(start, end) {
     const elapsedTime = this.getDifference(start, end);
-    debugger
     return `${new Date(start).toDateString()} _(${elapsedTime})_`;
   }
   
   static avgClosingTime(dbData, prData) {
     let count = 0;
     let avg = 0;
-    debugger
     if(dbData){
       count = dbData.count;
-      avg = dbData.avg_close_in_secs;
+      avg = isNaN(dbData.avg_close_in_secs) ? 0 : dbData.avg_close_in_secs;
     }
     const timeElapsed = (new Date() - new Date(prData.created_at)) / 1000;
-    debugger
     return Math.floor(((count * avg) + timeElapsed)/(count+1));
   }
 }
