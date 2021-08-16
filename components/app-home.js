@@ -7,7 +7,8 @@ class AppHome {
 debugger
     const PRReviews = {};
     for( const channel of channels){
-      PRReviews[channel.id] = await MongoDB.listChannelPRs(channel.id);
+      const data = await MongoDB.listChannelPRs(channel.id);
+      if (data.length > 0) PRReviews[channel.id] = data;
     }
         debugger;
     console.log(event)
