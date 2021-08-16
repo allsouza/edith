@@ -74,6 +74,7 @@ class MongoDB {
   
   static async finalizePR(channel_id, id) {
     const client = createClient();
+    let result;
     try {
       await client.connect();
       const data = await client.db().collection(channel_id).findOneAndDelete({"_id": id});
@@ -82,13 +83,16 @@ class MongoDB {
       if(statsExist) {
         let dbData = await client.db().collection(`${channel_id}_stats`).findOne();
         statsData = createStatsData(dbData, data);
-        await client.db().collection(`${channel_id}_stats`).replaceOne({"_id"}statsData);
+        debugger
+        result = await client.db().collection(`${channel_id}_stats`).replaceOne({"_id": dbData._id}, statsData);
+        debugger
       } else {
         statsData = createStatsData(null, data);
         debugger
-        await client.db().collection(`${channel_id}_stats`).insertOne(statsData);
+        result = await client.db().collection(`${channel_id}_stats`).insertOne(statsData);
+        debugger
       }
-      
+      console.log(result);
     } catch (error) {
       console.error(error)
     } finally {
