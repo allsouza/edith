@@ -1,6 +1,7 @@
 
 const { MongoClient } = require('mongodb');
 const { EncryptionEngine } = require('../utils/encryption-engine.js');
+const { TimeFormatter } = require('../utils/time-formatter.js');
 
 const password = process.env.ATLAS_PASSWORD;
 const uri = `mongodb+srv://edithAdmin:${password}@edith.vqfcf.mongodb.net/EDITH?retryWrites=true&w=majority`;
@@ -77,12 +78,17 @@ class MongoDB {
       await client.connect();
       const data = await client.db().collection(channel_id).findOneAndDelete({"_id": id});
       const statsExist = await client.db().collection(`${channel_id}_stats`).count() > 0;
+      let statsData;
       if(statsExist) {
-        let statsData = await client.db().collection(`${channel_id}_stats`).findOne();
-        statsData = {
-          
-        }
+        let dbData = await client.db().collection(`${channel_id}_stats`).findOne();
+        statsData = createStatsData(dbData, data);
+        await client.db().collection(`${channel_id}_stats`).replaceOne({"_id"}statsData);
+      } else {
+        statsData = createStatsData(null, data);
+        debugger
+        await client.db().collection(`${channel_id}_stats`).insertOne(statsData);
       }
+      
     } catch (error) {
       console.error(error)
     } finally {
@@ -94,7 +100,11 @@ class MongoDB {
 
 function createStatsData(dbData, prData) {
   const count = dbData ? dbData.count + 1 : 1;
-  const avgClose = dbData? dbData.avgClose 
+  const avgCloseInSecs = TimeFormatter.avgClosingTime(dbData, prData);
+  return {
+    count: count,
+    avg_close_in_secs: avgCloseInSecs
+  }
 }
 
 module.exports = { MongoDB };

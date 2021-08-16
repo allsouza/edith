@@ -23,8 +23,14 @@ class TimeFormatter {
     return `${new Date(start).toDateString()} _(${elapsedTime})_`;
   }
   
-  static avgClosingTime(avg, count, start, end) {
-    const timeElapsed = (end - start) / 1000;
+  static avgClosingTime(dbData, prData) {
+    let count = 0;
+    let avg = 0;
+    if(dbData){
+      count = dbData.count;
+      avg = dbData.avg_close_in_secs;
+    }
+    const timeElapsed = (new Date() - new Date(prData.created_at)) / 1000;
     return Math.floor(((count * avg) + timeElapsed)/(count+1));
   }
 }
