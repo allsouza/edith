@@ -154,6 +154,11 @@ class PRReview {
           text: `PR Notes: ${notes}`
         });
       }
+      
+      app.client.chat.postMessage({
+        token: token,
+        cha
+      })
 
       const dbObject = {
         summary: data.state.values.pr_summary.summary_input.value,
@@ -227,7 +232,7 @@ class PRReview {
         fields: [
           {
             type: "mrkdwn",
-            text: `*Status:*\n:${emoji}: \t${entry.status}`
+            text: `*Status:*\n:${emoji}: \t${StringUtils.capitalizeFirstLetter(entry.status)}`
           },
           {
             type: "mrkdwn",
