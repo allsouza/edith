@@ -155,6 +155,25 @@ class PRReview {
         });
       }
 
+      app.client.chat.postMessage({
+        token: token,
+        channel: channel_id,
+        thread_ts: result.message.ts,
+        blocks: [
+          {
+            type: "context",
+            elements: [
+              {
+                type: "plain_text",
+                text:
+                  "React with :approved: or :reviewed: and the author will be notified.",
+                emoji: true
+              }
+            ]
+          }
+        ]
+      });
+
       app.client.chat.postEphemeral({
         token: token,
         channel: channel_id,
@@ -387,7 +406,7 @@ class PRReview {
       body.channel.id,
       body.actions[0].value
     );
-    if(!dbEntry) return;
+    if (!dbEntry) return; // If entry not found do nothing
     if (dbEntry.author == body.user.id) {
       await MongoDB.finalizePR(body.channel.id, body.actions[0].value);
       client.chat.postMessage({
