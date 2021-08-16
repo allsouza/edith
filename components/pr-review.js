@@ -363,7 +363,6 @@ class PRReview {
 
   static async computeReaction(event, client) {
     const channel = event.item.channel;
-    debugger;
     if (event.reaction == REVIEWED || event.reaction == APPROVED) {
       const dbEntry = await MongoDB.findPR(channel, event.item.ts);
       if (dbEntry) {
@@ -375,11 +374,11 @@ class PRReview {
 
         switch (event.reaction) {
           case REVIEWED:
-            if (dbEntry.status == OPEN)
+            // if (dbEntry.status == OPEN)
               await MongoDB.updateStatus(channel, dbEntry._id, REVIEWED);
             break;
           case APPROVED:
-            if (dbEntry.status == REVIEWED || dbEntry.status == OPEN)
+            // if (dbEntry.status == REVIEWED || dbEntry.status == OPEN)
               await MongoDB.updateStatus(channel, dbEntry._id, APPROVED);
             break;
         }

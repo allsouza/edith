@@ -79,7 +79,6 @@ class MongoDB {
       await client.connect();
       const data = await client.db().collection(channel_id).findOneAndDelete({"pr_post_id": id});
       const statsExist = await client.db().collection(`${channel_id}_stats`).count() > 0;
-      
       if(statsExist) {
         let dbData = await client.db().collection(`${channel_id}_stats`).findOne();
         result = await client.db().collection(`${channel_id}_stats`).replaceOne({"_id": dbData._id}, createStatsData(dbData, data));
