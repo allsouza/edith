@@ -365,14 +365,27 @@ class PRReview {
   }
 
   static async mergedPR(body, client) {
-    const dbEntry = await MongoDB.finalizePR(body.channel.id, body.actions[0].value);
-    debugger
-    client.chat.postMessage({
-      token: process.env.SLACK_BOT_TOKEN,
-      text: ":checkered_flag: Pull Request merged. Thank you all!",
-      channel: body.channel.id,
-      thread_ts: body.actions[0].value
-    })
+    const dbEntry = await MongoDB.findPR(
+      body.channel.id,
+      body.actions[0].value
+    );
+    debugger;
+    if (dbEntry.author != body.user.id) {
+      await MongoDB.finalizePR(body.channel.id, body.actions[0].value);
+      client.chat.postMessage({
+        token: process.env.SLACK_BOT_TOKEN,
+        text: ":checkered_flag: Pull Request merged. Thank you all!",
+        channel: body.channel.id,
+        thread_ts: body.actions[0].value
+      });
+    } else {
+      client.chat.postEphemeral({
+        token: process.env.SLACK_BOT_TOKEN,
+        text: ":red_flag: Only the author can set as Merged",
+        channel: body.channel.id,
+        thread_ts: body.actions[0].value
+      });
+    }
   }
 }
 
