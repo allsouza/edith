@@ -13,9 +13,17 @@ class AppHome {
       const data = await MongoDB.listChannelPRs(channel.id);
       if (data.length > 0) PRReviews[channel.id] = data;
     }
+    
+    const blocks = [];
 
     const result = client.views.publish({
-      user_id: event.user
+      user_id: event.user,
+      view: {
+        type: 'home',
+        callback_id: 'home_view',
+        blocks: blocks,
+        text: "List of PR Review Requests"
+      }
     });
   }
 }

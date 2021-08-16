@@ -166,7 +166,7 @@ class PRReview {
               {
                 type: "plain_text",
                 text:
-                  "React with :approved: or :reviewed: and the author will be notified.",
+                  "React with :approved: or :reviewed: to the original message above, and the author will be notified.",
                 emoji: true
               }
             ]
