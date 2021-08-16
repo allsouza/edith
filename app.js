@@ -53,7 +53,7 @@ app.event("reaction_added", async ({ event, client }) => {
 });
 
 app.event("app_home_opened", async ({ event, client , context}) => {
-  AppHome.open(event, client, context);
+  AppHome.showPRs(event, client, context);
 });
 
 (async () => {

@@ -3,7 +3,7 @@ const { TimeFormatter } = require('../utils/time-formatter.js');
 const { StringUtils } = require('../utils/string-utils.js');
 
 class AppHome {
-  static async open(event, client, context) {
+  static async showPRs(event, client, context) {
     let channels = await client.users.conversations({
       token: process.env.SLACK_BOT_TOKEN,
       user: event.user,
@@ -23,8 +23,7 @@ debugger
         view: {
           type: "home",
           callback_id: "home_view",
-          blocks: blocks,
-          text: "List of PR Review Requests"
+          blocks: blocks
         }
       });
     } catch (error) {
@@ -151,6 +150,7 @@ function createBlocks(data, userId) {
 
       blocks.push({ type: "divider" });
     }
+    blocks.push({type: "divider"})
   }
   return blocks;
 }
