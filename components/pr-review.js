@@ -323,7 +323,18 @@ class PRReview {
     }
   }
 
-  static async takeActionModal() {}
+  static async takeAction(body, client) {
+    debugger
+    const event = {
+      reaction: body.actions[0].action_id.includes("review") ? "reviewed" : "approved",
+      item: {
+        ts: body.actions[0].value,
+      },
+      user: body.user.id
+    }
+    
+    this.computeReaction(event, client);
+  }
 
   static async mergedPR() {}
 }
