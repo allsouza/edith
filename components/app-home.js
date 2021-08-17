@@ -53,6 +53,7 @@ class AppHome {
                   emoji: true
                 },
                 value: "click_me_123",
+                style: "primary",
                 action_id: "create-pr-action"
               }
             },
@@ -60,7 +61,7 @@ class AppHome {
               type: "section",
               text: {
                 type: "mrkdwn",
-                text: "View pending requests from channels you are a member of"
+                text: "View pending requests from channels you are a member of. _(May take a few secods to load)_"
               },
               accessory: {
                 type: "button",
@@ -69,7 +70,7 @@ class AppHome {
                   text: "View Requests",
                   emoji: true
                 },
-                value: "click_me_123",
+                style: "primary",
                 action_id: "view-all-prs-action"
               }
             },
@@ -115,7 +116,7 @@ class AppHome {
           type: "modal",
           title: {
             type: "plain_text",
-            text: "All O",
+            text: "All open PR Reviews",
             emoji: true
           },
           close: {
