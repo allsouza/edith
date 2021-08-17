@@ -404,8 +404,7 @@ class PRReview {
 
   static async mergedPR(data, client) {
     const isFromAppHome = data.container.type == "view";
-    const body =
-      isFromAppHome ? AppHome.normalizeBody(data) : data;
+    const body = isFromAppHome ? AppHome.normalizeBody(data) : data;
     const dbEntry = await MongoDB.findPR(
       body.channel.id,
       body.actions[0].value
@@ -419,11 +418,35 @@ class PRReview {
         channel: body.channel.id,
         thread_ts: body.actions[0].value
       });
-      if(isFromAppHome){
-        client.views.open({
+      if (isFromAppHome) {
+        console.log("Should open the other view")
+        client.views.push({
           token: token,
-          trigger
-        })
+          trigger_id: body.trigger_id,
+          view: {
+            type: "modal",
+            title: {
+              type: "plain_text",
+              text: "PR Review Complete",
+              emoji: true
+            },
+            close: {
+              type: "plain_text",
+              text: "Close",
+              emoji: true
+            },
+            blocks: [
+              {
+                type: "section",
+                text: {
+                  type: "mrkdwn",
+                  text:
+                    ":checkered_flag: Review request marked as *Merged* and removed from queue."
+                }
+              }
+            ]
+          }
+        });
       }
     } else {
       client.chat.postEphemeral({
