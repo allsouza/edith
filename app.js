@@ -68,6 +68,10 @@ app.event("app_home_opened", async ({ event, client , context}) => {
   AppHome.open(event, client, context);
 });
 
+app.event("view_closed", async ({ event, client}) =>{
+  
+})
+
 (async () => {
   // Start your app
   await app.start(process.env.PORT || 3000);
