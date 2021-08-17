@@ -1,8 +1,9 @@
 const { MongoDB } = require("./db.js");
 const { TimeFormatter } = require("../utils/time-formatter.js");
 const { StringUtils } = require("../utils/string-utils.js");
-const { AppHome } = require('./app-home.js');
+const { AppHome } = require("./app-home.js");
 
+const token = process.env.SLACK_BOT_TOKEN;
 const OPEN = "open";
 const REVIEWED = "reviewed";
 const APPROVED = "approved";
@@ -109,7 +110,6 @@ class PRReview {
   }
 
   static async postPRReviewRequest(user_id, data, app) {
-    const token = process.env.SLACK_BOT_TOKEN;
     const summary = data.state.values.pr_summary.summary_input.value;
     const link = data.state.values.pr_link.link_input.value;
     const service = data.state.values.pr_service.service_input.value;
@@ -377,11 +377,11 @@ class PRReview {
         switch (event.reaction) {
           case REVIEWED:
             // if (dbEntry.status == OPEN)
-              await MongoDB.updateStatus(channel, dbEntry._id, REVIEWED);
+            await MongoDB.updateStatus(channel, dbEntry._id, REVIEWED);
             break;
           case APPROVED:
             // if (dbEntry.status == REVIEWED || dbEntry.status == OPEN)
-              await MongoDB.updateStatus(channel, dbEntry._id, APPROVED);
+            await MongoDB.updateStatus(channel, dbEntry._id, APPROVED);
             break;
         }
       }
@@ -403,7 +403,8 @@ class PRReview {
   }
 
   static async mergedPR(data, client) {
-    const body = data.container.type == "view" ? AppHome.normalizeBody(data) : data;
+    const body =
+      data.container.type == "view" ? AppHome.normalizeBody(data) : data;
     const dbEntry = await MongoDB.findPR(
       body.channel.id,
       body.actions[0].value
