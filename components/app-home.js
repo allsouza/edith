@@ -61,7 +61,7 @@ class AppHome {
               text: {
                 type: "mrkdwn",
                 text:
-                  "View pending requests from channels you are a member of. _(May take a few secods to load)_"
+                  "View pending requests from channels you are a member of. _(May take a few seconds to load)_"
               },
               accessory: {
                 type: "button",
@@ -136,9 +136,11 @@ class AppHome {
   }
 
   static normalizeBody(body) {
+    debugger
     body.actions[0].value = JSON.parse(body.actions[0].value);
     body = { ...body, channel: { id: body.actions[0].value.channel_id } };
     body.actions[0].value = body.actions[0].value.post_id;
+    debugger
     return body;
   }
 }

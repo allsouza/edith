@@ -44,7 +44,7 @@ app.action("approve-pr-action", ({ ack, body, client }) => {
 // Deletes the PR Review from DB and calculates stats
 app.action("merged-button-action", ({ ack, body, client }) => {
   ack();
-  PRReview.mergedPR(AppHome.normalizeBody(body), client);
+  PRReview.mergedPR(body, client);
 })
 
 // Views all PRs from App Home

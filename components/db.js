@@ -48,6 +48,7 @@ class MongoDB {
   }
   
   static async findPR(channel_id, post_id) {
+    debugger
     const client = createClient();
     try{
       await client.connect();

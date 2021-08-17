@@ -1,6 +1,7 @@
 const { MongoDB } = require("./db.js");
 const { TimeFormatter } = require("../utils/time-formatter.js");
 const { StringUtils } = require("../utils/string-utils.js");
+const { AppHome } = require('./app-home.js');
 
 const OPEN = "open";
 const REVIEWED = "reviewed";
@@ -402,7 +403,7 @@ class PRReview {
   }
 
   static async mergedPR(body, client) {
-    debugger
+    body = body.container.type == "view" ? PRReview.mergedPR(AppHome.normalizeBody(body), client) : body;
     const dbEntry = await MongoDB.findPR(
       body.channel.id,
       body.actions[0].value
