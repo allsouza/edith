@@ -402,8 +402,8 @@ class PRReview {
     this.computeReaction(event, client);
   }
 
-  static async mergedPR(body, client) {
-    body = body.container.type == "view" ? PRReview.mergedPR(AppHome.normalizeBody(body), client) : body;
+  static async mergedPR(data, client) {
+    const body = data.container.type == "view" ? AppHome.normalizeBody(data) : data;
     const dbEntry = await MongoDB.findPR(
       body.channel.id,
       body.actions[0].value

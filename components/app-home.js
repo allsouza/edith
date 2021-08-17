@@ -136,11 +136,9 @@ class AppHome {
   }
 
   static normalizeBody(body) {
-    debugger
     body.actions[0].value = JSON.parse(body.actions[0].value);
     body = { ...body, channel: { id: body.actions[0].value.channel_id } };
     body.actions[0].value = body.actions[0].value.post_id;
-    debugger
     return body;
   }
 }
