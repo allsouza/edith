@@ -90,8 +90,7 @@ class AppHome {
     }
   }
 
-  static async showPRs(body, client, payload) {
-    debugger;
+  static async viewAllPRs(body, client, payload) {
     let channels = await client.users.conversations({
       token: process.env.SLACK_BOT_TOKEN,
       user: body.user.id,
@@ -107,7 +106,6 @@ class AppHome {
       });
       if (data.length > 0) PRReviews[channel_info.channel.name] = data;
     }
-    debugger;
     try {
       const blocks = createBlocks(PRReviews, body.user.id);
       const result = await client.views.open({
@@ -117,11 +115,15 @@ class AppHome {
           type: "modal",
           callback_id: "list_prs_modal_view",
           title: {
-            type: "mrkdwn",
-            text: "All Open PR Review Requests"
+            type: "plain_text",
+            text: "All Open PR Requests"
           },
           blocks: blocks
-        }
+        },
+          submit: {
+            type: "plain_text",
+            text: "Done"
+          }
       });
     } catch (error) {
       console.error(error);
@@ -250,6 +252,10 @@ function createBlocks(data, userId) {
     blocks.push({ type: "divider" });
   }
   return blocks;
+}
+
+function getAllRequests() {
+  
 }
 
 module.exports = { AppHome };
