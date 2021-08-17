@@ -13,7 +13,8 @@ class AppHome {
     const PRReviews = {};
     for (const channel of channels) {
       const data = await MongoDB.listChannelPRs(channel.id);
-      if (data.length > 0) PRReviews[channel.id] = data;
+      const channel_info = await client.conversations.info({token: process.env.SLACK_BOT_TOKEN, channel: channel.id})
+      if (data.length > 0) PRReviews[channel_info.channel.name] = data;
     }
 debugger
     try {
@@ -36,6 +37,7 @@ function createBlocks(data, userId) {
   const blocks = [];
   
   for(const channel_name of Object.keys(data)) {
+
     blocks.push({
         type: "header",
         text: {
