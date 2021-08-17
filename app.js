@@ -47,13 +47,15 @@ app.action("merged-button-action", ({ ack, body, client }) => {
   PRReview.mergedPR(body, client);
 })
 
+app.action("")
+
 // Listens for when reactins are added and acts if :approved: or :reviewed:
 app.event("reaction_added", async ({ event, client }) => {
   PRReview.computeReaction(event, client);
 });
 
 app.event("app_home_opened", async ({ event, client , context}) => {
-  AppHome.showPRs(event, client, context);
+  AppHome.open(event, client, context);
 });
 
 (async () => {

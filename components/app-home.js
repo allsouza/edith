@@ -1,9 +1,92 @@
 const { MongoDB } = require("./db.js");
-const { TimeFormatter } = require('../utils/time-formatter.js');
-const { StringUtils } = require('../utils/string-utils.js');
+const { TimeFormatter } = require("../utils/time-formatter.js");
+const { StringUtils } = require("../utils/string-utils.js");
 
 class AppHome {
-  static async showPRs(event, client, context) {
+  static async open(event, client, context) {
+    try {
+      const result = await client.views.publish({
+        type: "home",
+        blocks: [
+          {
+            type: "header",
+            text: {
+              type: "plain_text",
+              text: "Welcome to E.D.I.T.H.",
+              emoji: true
+            }
+          },
+          {
+            type: "section",
+            text: {
+              type: "plain_text",
+              text:
+                "This is app is meant to be an assistant to developers using slack to coordinate work.",
+              emoji: true
+            }
+          },
+          {
+            type: "context",
+            elements: [
+              {
+                type: "plain_text",
+                text: "Available tasks:",
+                emoji: true
+              }
+            ]
+          },
+          {
+            type: "section",
+            text: {
+              type: "mrkdwn",
+              text: "Create a PR Review request"
+            },
+            accessory: {
+              type: "button",
+              text: {
+                type: "plain_text",
+                text: "Create Request",
+                emoji: true
+              },
+              value: "click_me_123",
+              action_id: "create-pr-action"
+            }
+          },
+          {
+            type: "section",
+            text: {
+              type: "mrkdwn",
+              text: "View pending requests from channels you are a member of"
+            },
+            accessory: {
+              type: "button",
+              text: {
+                type: "plain_text",
+                text: "View Requests",
+                emoji: true
+              },
+              value: "click_me_123",
+              action_id: "view-all-prs-action"
+            }
+          },
+          {
+            type: "context",
+            elements: [
+              {
+                type: "mrkdwn",
+                text: "_Developed by Andre Souza_"
+              }
+            ]
+          }
+        ]
+      });
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  static async showPRs(event, client, payload) {
+    debugger
     let channels = await client.users.conversations({
       token: process.env.SLACK_BOT_TOKEN,
       user: event.user,
@@ -13,17 +96,21 @@ class AppHome {
     const PRReviews = {};
     for (const channel of channels) {
       const data = await MongoDB.listChannelPRs(channel.id);
-      const channel_info = await client.conversations.info({token: process.env.SLACK_BOT_TOKEN, channel: channel.id})
+      const channel_info = await client.conversations.info({
+        token: process.env.SLACK_BOT_TOKEN,
+        channel: channel.id
+      });
       if (data.length > 0) PRReviews[channel_info.channel.name] = data;
     }
-debugger
+    debugger;
     try {
       const blocks = createBlocks(PRReviews, event.user);
-      const result = await client.views.publish({
-        user_id: event.user,
+      const result = await client.views.open({
+        token: process.env.SLACK_BOT_TOKEN,
+        trigger_id: payload.trigger_id,
         view: {
-          type: "home",
-          callback_id: "home_view",
+          type: "modal",
+          callback_id: "list_prs_modal_view",
           blocks: blocks
         }
       });
@@ -35,20 +122,19 @@ debugger
 
 function createBlocks(data, userId) {
   const blocks = [];
-  
-  for(const channel_name of Object.keys(data)) {
 
+  for (const channel_name of Object.keys(data)) {
     blocks.push({
-        type: "header",
-        text: {
-          type: "plain_text",
-          text: `Open PR Reviews in ${channel_name}`,
-          emoji: true
-        }
-      });
-    
-    for(const entry of data[channel_name]) {
-       let emoji;
+      type: "header",
+      text: {
+        type: "plain_text",
+        text: `Open PR Reviews in ${channel_name}`,
+        emoji: true
+      }
+    });
+
+    for (const entry of data[channel_name]) {
+      let emoji;
       switch (entry.status) {
         case "reviewed":
           emoji = "reviewed";
@@ -152,7 +238,7 @@ function createBlocks(data, userId) {
 
       blocks.push({ type: "divider" });
     }
-    blocks.push({type: "divider"})
+    blocks.push({ type: "divider" });
   }
   return blocks;
 }
