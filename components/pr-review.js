@@ -83,7 +83,7 @@ class PRReview {
             {
               type: "input",
               block_id: "channel_select",
-              optional: !isSlashCommand,
+              optional: isSlashCommand,
               label: {
                 type: "plain_text",
                 text: "PR Review Request to be posted on "

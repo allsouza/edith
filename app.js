@@ -47,11 +47,13 @@ app.action("merged-button-action", ({ ack, body, client }) => {
   PRReview.mergedPR(body, client);
 })
 
+// Views all PRs from App Home
 app.action("view-all-prs-action", ({ ack, body, client }) => {
   ack();
   AppHome.viewAllPRs(body, client, body)
 })
 
+// Create PR Review request from App Home
 app.action("create-pr-action", ({ ack, body, context}) => {
   PRReview.initialModal(ack, body, context, app);
 })
@@ -61,6 +63,7 @@ app.event("reaction_added", async ({ event, client }) => {
   PRReview.computeReaction(event, client);
 });
 
+// Trigger event when app home is opened
 app.event("app_home_opened", async ({ event, client , context}) => {
   AppHome.open(event, client, context);
 });
