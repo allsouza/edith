@@ -355,7 +355,7 @@ class PRReview {
 
     // Returns result to user
     app.client.chat.postEphemeral({
-      token: process.env.SLACK_BOT_TOKEN,
+      token: token,
       channel: channel_id,
       blocks: blocks,
       text: "Pending PRs should appear here",
@@ -369,7 +369,7 @@ class PRReview {
       const dbEntry = await MongoDB.findPR(channel, event.item.ts);
       if (dbEntry) {
         client.chat.postMessage({
-          token: process.env.SLACK_BOT_TOKEN,
+          token: token,
           channel: dbEntry.author,
           text: `:${event.reaction}: Your PR was ${event.reaction} by <@${event.user}>`
         });
@@ -403,8 +403,9 @@ class PRReview {
   }
 
   static async mergedPR(data, client) {
+    const isFromAppHome = data.container.type == "view";
     const body =
-      data.container.type == "view" ? AppHome.normalizeBody(data) : data;
+      isFromAppHome ? AppHome.normalizeBody(data) : data;
     const dbEntry = await MongoDB.findPR(
       body.channel.id,
       body.actions[0].value
@@ -413,14 +414,20 @@ class PRReview {
     if (dbEntry.author == body.user.id) {
       await MongoDB.finalizePR(body.channel.id, body.actions[0].value);
       client.chat.postMessage({
-        token: process.env.SLACK_BOT_TOKEN,
+        token: token,
         text: ":checkered_flag: Pull Request merged. Thank you all!",
         channel: body.channel.id,
         thread_ts: body.actions[0].value
       });
+      if(isFromAppHome){
+        client.views.open({
+          token: token,
+          trigger
+        })
+      }
     } else {
       client.chat.postEphemeral({
-        token: process.env.SLACK_BOT_TOKEN,
+        token: token,
         text: ":octagonal_sign: Only the author can set as Merged",
         channel: body.channel.id,
         thread_ts: body.actions[0].value,
