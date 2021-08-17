@@ -91,7 +91,7 @@ class AppHome {
     }
   }
 
-  static async viewAllPRs(body, client, payload) {
+  static async viewAllPRs(body, client) {
     let channels = await client.users.conversations({
       token: process.env.SLACK_BOT_TOKEN,
       user: body.user.id,

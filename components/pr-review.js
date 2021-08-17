@@ -10,6 +10,8 @@ class PRReview {
   static async initialModal(ack, payload, context, app) {
     // Acknowledge the command request
     ack();
+    const isSlashCommand = Boolean(payload.command);
+    debugger
     try {
       const result = await app.client.views.open({
         token: context.botToken,
@@ -81,7 +83,7 @@ class PRReview {
             {
               type: "input",
               block_id: "channel_select",
-              optional: true,
+              optional: !isSlashCommand,
               label: {
                 type: "plain_text",
                 text: "PR Review Request to be posted on "
@@ -90,7 +92,7 @@ class PRReview {
                 action_id: "channel_select",
                 type: "conversations_select",
                 response_url_enabled: true,
-                default_to_current_conversation: true
+                default_to_current_conversation: isSlashCommand
               }
             }
           ],
