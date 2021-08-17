@@ -11,7 +11,6 @@ class PRReview {
     // Acknowledge the command request
     ack();
     const isSlashCommand = Boolean(payload.command);
-    debugger
     try {
       const result = await app.client.views.open({
         token: context.botToken,
@@ -403,6 +402,7 @@ class PRReview {
   }
 
   static async mergedPR(body, client) {
+    debugger
     const dbEntry = await MongoDB.findPR(
       body.channel.id,
       body.actions[0].value

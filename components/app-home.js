@@ -4,7 +4,6 @@ const { StringUtils } = require("../utils/string-utils.js");
 
 class AppHome {
   static async open(event, client, context) {
-    debugger;
     try {
       const result = await client.views.publish({
         user_id: event.user,
