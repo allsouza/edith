@@ -60,7 +60,8 @@ class AppHome {
               type: "section",
               text: {
                 type: "mrkdwn",
-                text: "View pending requests from channels you are a member of. _(May take a few secods to load)_"
+                text:
+                  "View pending requests from channels you are a member of. _(May take a few secods to load)_"
               },
               accessory: {
                 type: "button",
@@ -104,7 +105,10 @@ class AppHome {
         token: process.env.SLACK_BOT_TOKEN,
         channel: channel.id
       });
-      if (data.length > 0) PRReviews[channel_info.channel.name] = data.map(element => {...element, channel_id: channel.id});
+      if (data.length > 0)
+        PRReviews[channel_info.channel.name] = data.map(element => {
+          return { ...element, channel_id: channel.id };
+        });
     }
     try {
       const blocks = createBlocks(PRReviews, body.user.id);
@@ -134,7 +138,6 @@ class AppHome {
 
 function createBlocks(data, userId) {
   const blocks = [];
-debugger
   for (const channel_name of Object.keys(data)) {
     blocks.push({
       type: "header",
@@ -160,6 +163,7 @@ debugger
       }
 
       const createdAt = TimeFormatter.createdAt(entry.created_at, new Date());
+      const prData = JSON.stringify({ post_id: entry.pr_post_id, channel_id: entry.channel_id });
 
       blocks.push({
         type: "section",
@@ -216,7 +220,7 @@ debugger
             text: ":white_check_mark: Merged"
           },
           style: "primary",
-          value: [{post_id: entry.pr_post_id, channel_id: entry.channel_id}],
+          value: prData,
           action_id: "merged-button-action"
         });
       } else {
