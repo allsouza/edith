@@ -104,7 +104,7 @@ class AppHome {
         token: process.env.SLACK_BOT_TOKEN,
         channel: channel.id
       });
-      if (data.length > 0) PRReviews[channel_info.channel.name] = data;
+      if (data.length > 0) PRReviews[channel_info.channel.name] = data.map(element => {...element, channel_id: channel.id});
     }
     try {
       const blocks = createBlocks(PRReviews, body.user.id);
@@ -134,7 +134,7 @@ class AppHome {
 
 function createBlocks(data, userId) {
   const blocks = [];
-
+debugger
   for (const channel_name of Object.keys(data)) {
     blocks.push({
       type: "header",
@@ -216,7 +216,7 @@ function createBlocks(data, userId) {
             text: ":white_check_mark: Merged"
           },
           style: "primary",
-          value: entry.pr_post_id,
+          value: [{post_id: entry.pr_post_id, channel_id: entry.channel_id}],
           action_id: "merged-button-action"
         });
       } else {
