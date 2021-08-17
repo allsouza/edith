@@ -47,7 +47,10 @@ app.action("merged-button-action", ({ ack, body, client }) => {
   PRReview.mergedPR(body, client);
 })
 
-app.action("")
+app.action("view-all-prs-action", ({ ack, body, client, payload }) => {
+  ack();
+  AppHome.showPRs(body, client, payload)
+})
 
 // Listens for when reactins are added and acts if :approved: or :reviewed:
 app.event("reaction_added", async ({ event, client }) => {

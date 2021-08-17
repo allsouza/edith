@@ -4,92 +4,97 @@ const { StringUtils } = require("../utils/string-utils.js");
 
 class AppHome {
   static async open(event, client, context) {
+    debugger;
     try {
       const result = await client.views.publish({
-        type: "home",
-        blocks: [
-          {
-            type: "header",
-            text: {
-              type: "plain_text",
-              text: "Welcome to E.D.I.T.H.",
-              emoji: true
-            }
-          },
-          {
-            type: "section",
-            text: {
-              type: "plain_text",
-              text:
-                "This is app is meant to be an assistant to developers using slack to coordinate work.",
-              emoji: true
-            }
-          },
-          {
-            type: "context",
-            elements: [
-              {
+        user_id: event.user,
+        view: {
+          type: "home",
+
+          blocks: [
+            {
+              type: "header",
+              text: {
                 type: "plain_text",
-                text: "Available tasks:",
+                text: "Welcome to E.D.I.T.H.",
                 emoji: true
               }
-            ]
-          },
-          {
-            type: "section",
-            text: {
-              type: "mrkdwn",
-              text: "Create a PR Review request"
             },
-            accessory: {
-              type: "button",
+            {
+              type: "section",
               text: {
                 type: "plain_text",
-                text: "Create Request",
+                text:
+                  "This is app is meant to be an assistant to developers using slack to coordinate work.",
                 emoji: true
-              },
-              value: "click_me_123",
-              action_id: "create-pr-action"
-            }
-          },
-          {
-            type: "section",
-            text: {
-              type: "mrkdwn",
-              text: "View pending requests from channels you are a member of"
+              }
             },
-            accessory: {
-              type: "button",
+            {
+              type: "context",
+              elements: [
+                {
+                  type: "plain_text",
+                  text: "Available tasks:",
+                  emoji: true
+                }
+              ]
+            },
+            {
+              type: "section",
               text: {
-                type: "plain_text",
-                text: "View Requests",
-                emoji: true
-              },
-              value: "click_me_123",
-              action_id: "view-all-prs-action"
-            }
-          },
-          {
-            type: "context",
-            elements: [
-              {
                 type: "mrkdwn",
-                text: "_Developed by Andre Souza_"
+                text: "Create a PR Review request"
+              },
+              accessory: {
+                type: "button",
+                text: {
+                  type: "plain_text",
+                  text: "Create Request",
+                  emoji: true
+                },
+                value: "click_me_123",
+                action_id: "create-pr-action"
               }
-            ]
-          }
-        ]
+            },
+            {
+              type: "section",
+              text: {
+                type: "mrkdwn",
+                text: "View pending requests from channels you are a member of"
+              },
+              accessory: {
+                type: "button",
+                text: {
+                  type: "plain_text",
+                  text: "View Requests",
+                  emoji: true
+                },
+                value: "click_me_123",
+                action_id: "view-all-prs-action"
+              }
+            },
+            {
+              type: "context",
+              elements: [
+                {
+                  type: "mrkdwn",
+                  text: "_Developed by Andre Souza_"
+                }
+              ]
+            }
+          ]
+        }
       });
     } catch (error) {
       console.error(error);
     }
   }
 
-  static async showPRs(event, client, payload) {
-    debugger
+  static async showPRs(body, client, payload) {
+    debugger;
     let channels = await client.users.conversations({
       token: process.env.SLACK_BOT_TOKEN,
-      user: event.user,
+      user: body.user.id,
       types: "public_channel, private_channel"
     });
     channels = channels.channels;
@@ -104,13 +109,17 @@ class AppHome {
     }
     debugger;
     try {
-      const blocks = createBlocks(PRReviews, event.user);
+      const blocks = createBlocks(PRReviews, body.user.id);
       const result = await client.views.open({
         token: process.env.SLACK_BOT_TOKEN,
-        trigger_id: payload.trigger_id,
+        trigger_id: body.trigger_id,
         view: {
           type: "modal",
           callback_id: "list_prs_modal_view",
+          title: {
+            type: "mrkdwn",
+            text: "All Open PR Review Requests"
+          },
           blocks: blocks
         }
       });
