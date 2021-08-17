@@ -423,7 +423,6 @@ class PRReview {
         client.views.push({
           token: token,
           trigger_id: body.trigger_id,
-          notify_on_close: true,
           view: {
             type: "modal",
             title: {
