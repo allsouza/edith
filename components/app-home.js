@@ -113,17 +113,18 @@ class AppHome {
         trigger_id: body.trigger_id,
         view: {
           type: "modal",
-          callback_id: "list_prs_modal_view",
           title: {
             type: "plain_text",
-            text: "All Open PR Requests"
+            text: "All O",
+            emoji: true
+          },
+          close: {
+            type: "plain_text",
+            text: "Close",
+            emoji: true
           },
           blocks: blocks
-        },
-          submit: {
-            type: "plain_text",
-            text: "Done"
-          }
+        }
       });
     } catch (error) {
       console.error(error);
@@ -252,10 +253,6 @@ function createBlocks(data, userId) {
     blocks.push({ type: "divider" });
   }
   return blocks;
-}
-
-function getAllRequests() {
-  
 }
 
 module.exports = { AppHome };
