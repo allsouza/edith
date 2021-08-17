@@ -134,6 +134,13 @@ class AppHome {
       console.error(error);
     }
   }
+
+  static normalizeBody(body) {
+    body.actions[0].value = JSON.parse(body.actions[0].value);
+    body = { ...body, channel: { id: body.actions[0].value.channel_id } };
+    body.actions[0].value = body.actions[0].value.post_id;
+    return body;
+  }
 }
 
 function createBlocks(data, userId) {
@@ -163,7 +170,10 @@ function createBlocks(data, userId) {
       }
 
       const createdAt = TimeFormatter.createdAt(entry.created_at, new Date());
-      const prData = JSON.stringify({ post_id: entry.pr_post_id, channel_id: entry.channel_id });
+      const prData = JSON.stringify({
+        post_id: entry.pr_post_id,
+        channel_id: entry.channel_id
+      });
 
       blocks.push({
         type: "section",
