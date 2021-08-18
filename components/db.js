@@ -31,13 +31,13 @@ class MongoDB {
   /*
     Fetches PR review requests for a given channel
   */
-  static async listChannelPRs(channel_id) {
+  static async listChannelPRs(collectionName) {
     const client = createClient();
     try {
       await client.connect();
       let result = await client
         .db()
-        .collection(channel_id)
+        .collection(collectionName)
         .find()
         .toArray();
       result = result.map(entry => EncryptionEngine.decryptPRPayload(entry));
@@ -49,13 +49,16 @@ class MongoDB {
     }
   }
 
-  static async findPR(channel_id, post_id) {
+  /*
+    Fetches a PR review request using the post_id
+  */
+  static async findPR(collectionName, post_id) {
     const client = createClient();
     try {
       await client.connect();
       return await client
         .db()
-        .collection(channel_id)
+        .collection(collectionName)
         .findOne({ pr_post_id: post_id });
     } catch (error) {
       console.error(error);
@@ -64,13 +67,16 @@ class MongoDB {
     }
   }
 
-  static async updateStatus(channel_id, id, status) {
+  /*
+    Updates PR review status in DB
+  */
+  static async updateStatus(collectionName, id, status) {
     const client = createClient();
     try {
       await client.connect();
       await client
         .db()
-        .collection(channel_id)
+        .collection(collectionName)
         .updateOne({ _id: id }, { $set: { status: status } });
     } catch (error) {
       console.log(error);
@@ -79,33 +85,36 @@ class MongoDB {
     }
   }
 
-  static async finalizePR(channel_id, id) {
+  /*
+    Finalizes the PR review
+    Deletes the entry from the DB and saves stats data to possibly be used in the future
+  */
+  static async finalizePR(collectionName, id) {
     const client = createClient();
-    let result;
     try {
       await client.connect();
       const data = await client
         .db()
-        .collection(channel_id)
+        .collection(collectionName)
         .findOneAndDelete({ pr_post_id: id });
       const statsExist =
         (await client
           .db()
-          .collection(`${channel_id}_stats`)
+          .collection(`${collectionName}_stats`)
           .count()) > 0;
       if (statsExist) {
         let dbData = await client
           .db()
-          .collection(`${channel_id}_stats`)
+          .collection(`${collectionName}_stats`)
           .findOne();
-        result = await client
+        await client
           .db()
-          .collection(`${channel_id}_stats`)
+          .collection(`${collectionName}_stats`)
           .replaceOne({ _id: dbData._id }, createStatsData(dbData, data));
       } else {
-        result = await client
+        await client
           .db()
-          .collection(`${channel_id}_stats`)
+          .collection(`${collectionName}_stats`)
           .insertOne(createStatsData(null, data));
       }
     } catch (error) {
