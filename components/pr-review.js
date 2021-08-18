@@ -9,17 +9,17 @@ const REVIEWED = "reviewed";
 const APPROVED = "approved";
 
 class PRReview {
-  static async initialModal(payload, app) {
+  /* 
+    Launches modal for PR Review request creation form
+  */
+  static async createPRReviewModal(payload, app) {
     const isSlashCommand = Boolean(payload.command);
     try {
       const result = await app.client.views.open({
         token: token,
-        // Pass a valid trigger_id within 3 seconds of receiving it
         trigger_id: payload.trigger_id,
-        // View payload
         view: {
           type: "modal",
-          // View identifier
           callback_id: "pr_review_modal_view",
           title: {
             type: "plain_text",
@@ -107,6 +107,9 @@ class PRReview {
     }
   }
 
+  /*
+    Populates the app home
+  */
   static async postPRReviewRequest(user_id, data, app) {
     const summary = data.state.values.pr_summary.summary_input.value;
     const link = data.state.values.pr_link.link_input.value;

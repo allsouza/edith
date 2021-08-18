@@ -12,7 +12,7 @@ const app = new App({
 // Opens the modal to create a PR Review request
 app.command("/pr_review", async ({ ack, payload }) => {
   ack();
-  PRReview.initialModal(payload, app);
+  PRReview.createPRReviewModal(payload, app);
 });
 
 // Logic that happens once the modal submit button is selected
@@ -55,8 +55,9 @@ app.action("view-all-prs-action", ({ ack, body, client }) => {
 })
 
 // Create PR Review request from App Home
-app.action("create-pr-action", ({ ack, body, context}) => {
-  PRReview.initialModal(ack, body, context, app);
+app.action("create-pr-action", ({ ack, body }) => {
+  ack();
+  PRReview.createPRReviewModal(body, app);
 })
 
 // Listens for when reactins are added and acts if :approved: or :reviewed:
