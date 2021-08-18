@@ -9,12 +9,11 @@ const REVIEWED = "reviewed";
 const APPROVED = "approved";
 
 class PRReview {
-  static async initialModal(ack, payload, context, app) {
-    ack();
+  static async initialModal(payload, app) {
     const isSlashCommand = Boolean(payload.command);
     try {
       const result = await app.client.views.open({
-        token: context.botToken,
+        token: token,
         // Pass a valid trigger_id within 3 seconds of receiving it
         trigger_id: payload.trigger_id,
         // View payload

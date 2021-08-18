@@ -10,8 +10,9 @@ const app = new App({
 });
 
 // Opens the modal to create a PR Review request
-app.command("/pr_review", async ({ ack, payload, context }) => {
-  PRReview.initialModal(ack, payload, context, app);
+app.command("/pr_review", async ({ ack, payload }) => {
+  ack();
+  PRReview.initialModal(payload, app);
 });
 
 // Logic that happens once the modal submit button is selected
@@ -21,7 +22,7 @@ app.view("pr_review_modal_view", ({ ack, body, view }) => {
 });
 
 // Displays all the open PR Reviews in the channel
-app.command("/view_prs", async ({ ack, payload, context }) => {
+app.command("/view_prs", async ({ ack, payload }) => {
   ack();
   PRReview.fetchPendingPRs(payload, app);
 });
