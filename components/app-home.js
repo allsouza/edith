@@ -3,13 +3,15 @@ const { TimeFormatter } = require("../utils/time-formatter.js");
 const { StringUtils } = require("../utils/string-utils.js");
 
 class AppHome {
+  /*
+  Populates the app home
+  */
   static async open(event, client, context) {
     try {
-      const result = await client.views.publish({
+      await client.views.publish({
         user_id: event.user,
         view: {
           type: "home",
-
           blocks: [
             {
               type: "header",
@@ -91,6 +93,9 @@ class AppHome {
     }
   }
 
+  /*
+    Opens a modal listing all open PRs in channels the user is part of
+  */
   static async viewAllPRs(body, client) {
     let channels = await client.users.conversations({
       token: process.env.SLACK_BOT_TOKEN,
@@ -111,7 +116,7 @@ class AppHome {
         });
     }
     try {
-      const blocks = createBlocks(PRReviews, body.user.id);
+      const blocks = createPRBlocks(PRReviews, body.user.id);
       const result = await client.views.open({
         token: process.env.SLACK_BOT_TOKEN,
         trigger_id: body.trigger_id,
@@ -135,6 +140,9 @@ class AppHome {
     }
   }
 
+  /*
+    Normalizes the body object to be used in prReview method
+  */
   static normalizeBody(body) {
     body.actions[0].value = JSON.parse(body.actions[0].value);
     body = { ...body, channel: { id: body.actions[0].value.channel_id } };
@@ -143,7 +151,7 @@ class AppHome {
   }
 }
 
-function createBlocks(data, userId) {
+function createPRBlocks(data, userId) {
   const blocks = [];
   for (const channel_name of Object.keys(data)) {
     blocks.push({
@@ -170,7 +178,7 @@ function createBlocks(data, userId) {
       }
 
       const createdAt = TimeFormatter.createdAt(entry.created_at, new Date());
-      debugger
+      debugger;
       const prData = JSON.stringify({
         post_id: entry.pr_post_id,
         channel_id: entry.channel_id

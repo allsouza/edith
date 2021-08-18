@@ -1,10 +1,10 @@
 {
-  "name": "bolt-app-template",
-  "version": "0.0.1",
-  "description": "A basic template to spin up a Bolt app for Slack",
-  "main": "app.js",
+  "name": "edith",
+  "version": "0.1.1",
+  "description": "A slack assistant for developers",
+  "main": "edith.js",
   "scripts": {
-    "start": "node app.js"
+    "start": "node edith.js"
   },
   "dependencies": {
     "@slack/bolt": "^3.5.0",
@@ -15,7 +15,7 @@
     "node": "16.x"
   },
   "repository": {
-    "url": "https://glitch.com/edit/#!/bolt-app-template"
+    "url": "https://glitch.com/edit/#!/edith-slack"
   },
   "license": "MIT",
   "keywords": [

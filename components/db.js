@@ -8,21 +8,10 @@ const createClient = () =>
   new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
 
 class MongoDB {
-  static async getAll() {
-    const client = createClient();
-    try {
-      await client.connect();
-      const dbList = await client
-        .db()
-        .admin()
-        .listDatabases();
-    } catch (error) {
-      console.error(error);
-    } finally {
-      client.close();
-    }
-  }
 
+  /*
+    Persists encrypted PR Review request data to database
+  */
   static async savePR(collectionName, data) {
     const client = createClient();
     try {
@@ -39,6 +28,9 @@ class MongoDB {
     }
   }
 
+  /*
+    Fetches PR review requests for a given channel
+  */
   static async listChannelPRs(channel_id) {
     const client = createClient();
     try {
