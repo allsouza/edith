@@ -10,7 +10,6 @@ const APPROVED = "approved";
 
 class PRReview {
   static async initialModal(ack, payload, context, app) {
-    // Acknowledge the command request
     ack();
     const isSlashCommand = Boolean(payload.command);
     try {
