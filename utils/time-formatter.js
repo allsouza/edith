@@ -4,17 +4,7 @@ class TimeFormatter {
     end = new Date(end);
 
     let elapsedTime = (end - start) / 1000;
-    let result;
-
-    if (elapsedTime < 60) {
-      result = `${Math.floor(elapsedTime)} seconds`;
-    } else if (elapsedTime < 7200) {
-      result = `${Math.floor(elapsedTime / 60)} minutes`;
-    } else {
-      result = `${Math.floor(elapsedTime / 3600)} hours`;
-    }
-
-    return result;
+    return this.toString(elapsedTime);
   }
 
   static createdAt(start, end) {
@@ -31,6 +21,18 @@ class TimeFormatter {
     }
     const timeElapsed = (new Date() - new Date(prData.value.created_at)) / 1000;
     return Math.floor((count * avg + timeElapsed) / (count + 1.0));
+  }
+  
+  static toString(time) {
+    let result;
+        if (time < 60) {
+      result = `${Math.floor(time)} seconds`;
+    } else if (time < 7200) {
+      result = `${Math.floor(time / 60)} minutes`;
+    } else {
+      result = `${Math.floor(time / 3600)} hours`;
+    }
+    return result;
   }
 }
 

@@ -593,6 +593,7 @@ async function createOpenReviewsViewBlock(payload) {
   const channel_name = payload.channel.name;
   const user_id = payload.user.id;
   const data = await MongoDB.listChannelPRs(channel_id);
+  const stats = await MongoDB.getChannelStats(channel_id);
   const blocks =
     data.length > 0
       ? []
@@ -600,8 +601,8 @@ async function createOpenReviewsViewBlock(payload) {
           {
             type: "section",
             text: {
-              type: "plain_text",
-              text: `No open PR review requests for ${channel_name}`
+              type: "mrkdwn",
+              text: `No open PR review requests for ${channel_name}.  Channel average review closing time is ${TimeFormatter.toString(stats.avg_close_in_secs)}.`
             }
           },
           {

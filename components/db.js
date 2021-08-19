@@ -119,7 +119,31 @@ class MongoDB {
     }
   }
   
-  static async 
+  static async getChannelStats(channel_id) {
+    const client = createClient();
+    try {
+      await client.connect();
+      const result = await client.db().collection('stats').findOne({channel_id})
+      return result;
+    } catch(error) {
+      console.error(error)
+    } finally {
+      client.close();
+    }
+  }
+  
+  static async getAllStats() {
+    const client = createClient();
+    try {
+      await client.connect();
+      const result = await client.db().collection('stats').find().toArray();
+      return result;
+    } catch(error) {
+      console.error(error);
+    } finally {
+      client.close();
+    }
+  }
 }
 
 function createStatsData(dbData, prData, collectionName) {
