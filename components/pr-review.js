@@ -582,7 +582,6 @@ class PRReview {
   }
 
 async function createOpenReviewsViewBlock(payload) {
-  debugger;
   const channel_id = payload.channel.id;
   const channel_name = payload.channel.name;
   const user_id = payload.user.id;

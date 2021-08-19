@@ -51,7 +51,6 @@ app.action("approve-pr-action", async ({ ack, body, payload, client }) => {
 // Deletes the PR Review from DB and calculates stats
 app.action("merged-button-action", ({ ack, body, client }) => {
   ack();
-  debugger
   PRReview.mergedPR(body, client);
 })
 
