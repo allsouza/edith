@@ -45,7 +45,7 @@ app.action("review-pr-action", async ({ ack, body, client }) => {
 // Flow to set PR Review as APPROVED from /view_prs command
 app.action("approve-pr-action", async ({ ack, body, payload, client }) => {
   ack();
-  await PRReview.takeAction(body, client);
+  body.container.type == "view" ? PRReview.takeActionModal(body, client) : PRReview.takeAction(body, client);
 });
 
 // Deletes the PR Review from DB and calculates stats

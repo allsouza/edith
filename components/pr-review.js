@@ -410,6 +410,11 @@ class PRReview {
       }
 
       const createdAt = TimeFormatter.createdAt(entry.created_at, new Date());
+      const info = JSON.stringify({
+        channel_id: channel_id,
+        channel_name: channel_name,
+        pr_post_id: entry.pr_post_id
+      })
 
       blocks.push({
         type: "section",
@@ -466,7 +471,7 @@ class PRReview {
             text: ":white_check_mark: Merged"
           },
           style: "primary",
-          value: entry.pr_post_id,
+          value: info,
           action_id: "merged-button-action"
         });
       } else {
@@ -478,7 +483,7 @@ class PRReview {
             text: ":approved: Approve"
           },
           style: "primary",
-          value: entry.pr_post_id,
+          value: info,
           action_id: "approve-pr-action"
         });
         buttons.push({
@@ -489,7 +494,7 @@ class PRReview {
             text: ":reviewed: Review"
           },
           style: "danger",
-          value: entry.pr_post_id,
+          value: info,
           action_id: "review-pr-action"
         });
       }
@@ -552,7 +557,24 @@ class PRReview {
     Prepares object payload to send to update status when a button is pressed
   */
   static async takeAction(body, client) {
-    debugger;
+    const event = {
+      reaction: body.actions[0].action_id.includes("review")
+        ? REVIEWED
+        : APPROVED,
+      item: {
+        ts: body.actions[0].value,
+        channel: body.channel.id
+      },
+      user: body.user.id
+    };
+    this.computeReaction(event, client);
+  }
+  
+  /*
+    Prepares object payload to send to update status when a button is pressed in modal
+  */
+  static async takeActionModal(body, client) {
+    debugger
     const event = {
       reaction: body.actions[0].action_id.includes("review")
         ? REVIEWED
