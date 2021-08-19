@@ -223,7 +223,7 @@ class PRReview {
           token: token,
           channel: channel_id,
           text:
-            "Invalid PR link! Make sure your link is correct and try again.",
+            "Invalid PR link! Make sure your link follows the correct url format (http://...) and try again.",
           user: user_id
         });
       }
