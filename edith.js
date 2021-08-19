@@ -39,13 +39,13 @@ app.action("link-button-action", ({ ack }) => ack());
 // Flow to set PR Review as REVIEWED from /view_prs command
 app.action("review-pr-action", async ({ ack, body, client }) => {
   ack();
-  body.container.type == "view" ? PRReview.takeActionModal(body, client) : PRReview.takeAction(body, client);
+  PRReview.takeAction(body, client);
 });
 
 // Flow to set PR Review as APPROVED from /view_prs command
 app.action("approve-pr-action", async ({ ack, body, payload, client }) => {
   ack();
-  body.container.type == "view" ? PRReview.takeActionModal(body, client) : PRReview.takeAction(body, client);
+  PRReview.takeAction(body, client);
 });
 
 // Deletes the PR Review from DB and calculates stats

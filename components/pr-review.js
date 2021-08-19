@@ -429,27 +429,27 @@ class PRReview {
     }
   }
 
-  /*
-    Prepares object payload to send to update status when a button is pressed
-  */
-  static async takeAction(body, client) {
-    const event = {
-      reaction: body.actions[0].action_id.includes("review")
-        ? REVIEWED
-        : APPROVED,
-      item: {
-        ts: body.actions[0].value,
-        channel: body.channel.id
-      },
-      user: body.user.id
-    };
-    this.computeReaction(event, client);
-  }
+  // /*
+  //   Prepares object payload to send to update status when a button is pressed
+  // */
+  // static async takeAction(body, client) {
+  //   const event = {
+  //     reaction: body.actions[0].action_id.includes("review")
+  //       ? REVIEWED
+  //       : APPROVED,
+  //     item: {
+  //       ts: body.actions[0].value,
+  //       channel: body.channel.id
+  //     },
+  //     user: body.user.id
+  //   };
+  //   this.computeReaction(event, client);
+  // }
 
   /*
     Prepares object payload to send to update status when a button is pressed in modal
   */
-  static async takeActionModal(body, client) {
+  static async takeAction(body, client) {
     const parsedValues = JSON.parse(body.actions[0].value);
     body.channel = {
       id: parsedValues.channel_id,
@@ -467,6 +467,37 @@ class PRReview {
     };
     await this.computeReaction(event, client);
     updateView(body, client);
+    // Opens modal to confirm action execution
+    client.views.push({
+      token: token,
+      trigger_id: body.trigger_id,
+      view: {
+        type: "modal",
+        title: {
+          type: "plain_text",
+          text: "PR Review Status Update",
+          emoji: true
+        },
+        close: {
+          type: "plain_text",
+          text: "Close",
+          emoji: true
+        },
+        blocks: [
+          {
+            type: "section",
+            text: {
+              type: "mrkdwn",
+              text: `:${
+                event.reaction
+              }: The PR review request's status has been updated to ${StringUtils.capitalizeFirstLetter(
+                event.reaction
+              )}`
+            }
+          }
+        ]
+      }
+    });
   }
 
   /*
@@ -491,7 +522,7 @@ class PRReview {
       });
       if (origin) {
         updateView(body, client);
-        // Opens modal to confirm action
+        // Opens modal to confirm action execution
         client.views.push({
           token: token,
           trigger_id: body.trigger_id,
