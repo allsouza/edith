@@ -523,9 +523,8 @@ class PRReview {
     Removes request from DB and sends message in thread to say the PR was merged
   */
   static async mergedPR(data, client) {
-    debugger;
-    const body = Normalizer.normalizeBody(data);
-    const origin = Boolean(body.channel.name) ? "channel" : "appHome";
+    const isView = data.container.type == "view";
+    const body = isView ? Normalizer.normalizeBody(data) : data;
     const dbEntry = await MongoDB.findPR(
       body.channel.id,
       body.actions[0].value
@@ -539,7 +538,7 @@ class PRReview {
         channel: body.channel.id,
         thread_ts: body.actions[0].value
       });
-      if (origin) {
+      if (isView) {
         updateView(body, client);
         // Opens modal to confirm action execution
         client.views.push({
@@ -569,6 +568,7 @@ class PRReview {
             ]
           }
         });
+      }
       } else {
         client.chat.postEphemeral({
           token: token,
@@ -580,7 +580,6 @@ class PRReview {
       }
     }
   }
-}
 
 async function createOpenReviewsViewBlock(payload) {
   debugger;

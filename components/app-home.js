@@ -190,7 +190,7 @@ function createPRBlocks(data, userId) {
 
       const createdAt = TimeFormatter.createdAt(entry.created_at, new Date());
       const prData = JSON.stringify({
-        post_id: entry.pr_post_id,
+        pr_post_id: entry.pr_post_id,
         channel_id: entry.channel_id
       });
 
