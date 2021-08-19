@@ -452,7 +452,7 @@ class PRReview {
     const parsedValues = JSON.parse(body.actions[0].value)
     body.channel = {
       id: parsedValues.channel_id,
-      channel_name: parsedValues.channel_name
+      name: parsedValues.channel_name
     }
     const event = {
       reaction: body.actions[0].action_id.includes("review")
@@ -466,7 +466,7 @@ class PRReview {
     };
     await this.computeReaction(event, client);
     debugger
-    if(body.channel.channel_name) {
+    if(body.channel.name) {
       // Updates modal information
     const viewBlocks = await createOpenReviewsViewBlock(body);
     await client.views.update({
@@ -497,6 +497,7 @@ class PRReview {
     Removes request from DB and sends message in thread to say the PR was merged
   */
   static async mergedPR(data, client) {
+    debugger
     const isFromAppHome = data.container.type == "view";
     const body = isFromAppHome ? AppHome.normalizeBody(data) : data;
     const dbEntry = await MongoDB.findPR(
