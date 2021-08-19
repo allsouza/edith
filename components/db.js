@@ -118,6 +118,8 @@ class MongoDB {
       client.close();
     }
   }
+  
+  static async 
 }
 
 function createStatsData(dbData, prData, collectionName) {

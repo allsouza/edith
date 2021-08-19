@@ -534,14 +534,14 @@ class PRReview {
       await MongoDB.finalizePR(body.channel.id, body.actions[0].value);
       client.chat.postMessage({
         token: token,
-        text: ":checkered_flag: Pull Request merged. Thank you all!",
-        block: {
+        blocks: [{
           type: "section",
           text: {
             type: "mrkdwn",
-            text: `:checkered_flag: Pull Request merged. Thank you all! \n _Completion time: ${TimeFormatter.getDifference(new Date(dbEntry.created_at), new Date())}_`
+            text: `:checkered_flag: Pull Request merged. Thank you all! \n_Completion time: ${TimeFormatter.getDifference(new Date(dbEntry.created_at), new Date())}_`
           }
-        },
+        }],
+        text: ":checkered_flag: Pull Request merged. Thank you all!",
         channel: body.channel.id,
         thread_ts: body.actions[0].value
       });
