@@ -97,25 +97,20 @@ class MongoDB {
         .db()
         .collection(collectionName)
         .findOneAndDelete({ pr_post_id: id });
-      const statsExist =
-        (await client
+      const dbStatsData = await client
           .db()
-          .collection(`${collectionName}_stats`)
-          .count()) > 0;
-      if (statsExist) {
-        let dbData = await client
-          .db()
-          .collection(`${collectionName}_stats`)
+          .collection(`stats`)
           .findOne();
+      if (dbStatsData) {
         await client
           .db()
-          .collection(`${collectionName}_stats`)
-          .replaceOne({ _id: dbData._id }, createStatsData(dbData, data));
+          .collection(`stats`)
+          .replaceOne({ _id: dbStatsData._id }, createStatsData(dbStatsData, data, collectionName));
       } else {
         await client
           .db()
-          .collection(`${collectionName}_stats`)
-          .insertOne(createStatsData(null, data));
+          .collection(`stats`)
+          .insertOne(createStatsData(null, data, collectionName));
       }
     } catch (error) {
       console.error(error);
@@ -125,10 +120,11 @@ class MongoDB {
   }
 }
 
-function createStatsData(dbData, prData) {
+function createStatsData(dbData, prData, collectionName) {
   const count = dbData ? dbData.count + 1 : 1;
   const avgCloseInSecs = TimeFormatter.avgClosingTime(dbData, prData);
   return {
+    channel_id: collectionName,
     count: count,
     avg_close_in_secs: avgCloseInSecs
   };
