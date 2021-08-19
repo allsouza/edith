@@ -2,6 +2,7 @@ const { MongoDB } = require("./db.js");
 const { TimeFormatter } = require("../utils/time-formatter.js");
 const { StringUtils } = require("../utils/string-utils.js");
 const { AppHome } = require("./app-home.js");
+const { Normalizer } = require('../utils/normalizer.js');
 
 const token = process.env.SLACK_BOT_TOKEN;
 const OPEN = "open";
@@ -498,8 +499,8 @@ class PRReview {
   */
   static async mergedPR(data, client) {
     debugger
-    const isFromAppHome = data.container.type == "view";
-    const body = isFromAppHome ? AppHome.normalizeBody(data) : data;
+    const body = Normalizer.normalizeBody(data);
+    const origin = Boolean(body.channel.name) ? "channel" : "appHome";
     const dbEntry = await MongoDB.findPR(
       body.channel.id,
       body.actions[0].value
@@ -513,7 +514,7 @@ class PRReview {
         channel: body.channel.id,
         thread_ts: body.actions[0].value
       });
-      if (isFromAppHome) {
+      if (origin == "appHome") {
         // Updates open PR modal
         debugger
         AppHome.viewAllPRs(data, client, data.view.id)
@@ -545,6 +546,8 @@ class PRReview {
             ]
           }
         });
+      } else if(origin == "channel") {
+        PRReview.fetch
       }
     } else {
       client.chat.postEphemeral({

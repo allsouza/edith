@@ -162,16 +162,6 @@ class AppHome {
       console.error(error);
     }
   }
-
-  /*
-    Normalizes the body object to be used in prReview method
-  */
-  static normalizeBody(body) {
-    body.actions[0].value = JSON.parse(body.actions[0].value);
-    body = { ...body, channel: { id: body.actions[0].value.channel_id } };
-    body.actions[0].value = body.actions[0].value.post_id;
-    return body;
-  }
 }
 
 function createPRBlocks(data, userId) {
