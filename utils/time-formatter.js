@@ -19,7 +19,7 @@ class TimeFormatter {
 
   static createdAt(start, end) {
     const elapsedTime = this.getDifference(start, end);
-    return `${new Date(start).toDateString()} _(${elapsedTime})_`;
+    return `${new Date(start).toDateString()} _(${elapsedTime})_ ago`;
   }
 
   static avgClosingTime(dbData, prData) {

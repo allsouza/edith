@@ -535,6 +535,13 @@ class PRReview {
       client.chat.postMessage({
         token: token,
         text: ":checkered_flag: Pull Request merged. Thank you all!",
+        block: {
+          type: "section",
+          text: {
+            type: "mrkdwn",
+            text: `:checkered_flag: Pull Request merged. Thank you all! \n _Completion time: ${TimeFormatter.getDifference(new Date(dbEntry.created_at), new Date())}_`
+          }
+        },
         channel: body.channel.id,
         thread_ts: body.actions[0].value
       });
