@@ -367,6 +367,9 @@ class PRReview {
     });
   }
 
+  /*
+    Updates the request status according to the reaction received
+  */
   static async computeReaction(event, client) {
     const channel = event.item.channel;
     if (event.reaction == REVIEWED || event.reaction == APPROVED) {
@@ -380,11 +383,9 @@ class PRReview {
 
         switch (event.reaction) {
           case REVIEWED:
-            // if (dbEntry.status == OPEN)
             await MongoDB.updateStatus(channel, dbEntry._id, REVIEWED);
             break;
           case APPROVED:
-            // if (dbEntry.status == REVIEWED || dbEntry.status == OPEN)
             await MongoDB.updateStatus(channel, dbEntry._id, APPROVED);
             break;
         }
@@ -392,6 +393,9 @@ class PRReview {
     }
   }
 
+  /*
+    Prepares object payload to send to update status when a button is pressed
+  */
   static async takeAction(body, client) {
     const event = {
       reaction: body.actions[0].action_id.includes("review")
@@ -406,6 +410,9 @@ class PRReview {
     this.computeReaction(event, client);
   }
 
+  /*
+    Removes request from DB and sends message in thread to say the PR was merged
+  */
   static async mergedPR(data, client) {
     const isFromAppHome = data.container.type == "view";
     const body = isFromAppHome ? AppHome.normalizeBody(data) : data;
