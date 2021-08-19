@@ -381,6 +381,10 @@ class PRReview {
 				"type": "plain_text",
 				"text": `No open PR review requests for ${channel_name}`
 			}
+		}, {
+			"type": "image",
+			"image_url": "https://media.giphy.com/media/26hkhPJ5hmdD87HYA/giphy.gif",
+			"alt_text": "nothing"
 		}];
 
     //Populates the block with entries from DB
