@@ -103,6 +103,7 @@ class AppHome {
       types: "public_channel, private_channel"
     });
     channels = channels.channels;
+    const stats = await MongoDB.getAllStats();
     const PRReviews = {};
     for (const channel of channels) {
       const data = await MongoDB.listChannelPRs(channel.id);
@@ -112,7 +113,7 @@ class AppHome {
       });
       if (data.length > 0)
         PRReviews[channel_info.channel.name] = data.map(element => {
-          return { ...element, channel_id: channel.id };
+          return { ...element, channel_id: channel.id, stats: stats[channel.id] };
         });
     }
     try {
