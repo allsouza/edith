@@ -420,7 +420,7 @@ class PRReview {
               type: "section",
               text: {
                 type: "mrkdwn",
-                text: `:${event.reaction}: Your ${dbEntry.service} PR was ${event.reaction} by <@${event.user}>`
+                text: `:${event.reaction}: Your ${dbEntry.service} PR was *${event.reaction}* by <@${event.user}>`
               },
               accessory: {
                 type: "button",
