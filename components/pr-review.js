@@ -574,18 +574,23 @@ class PRReview {
     Prepares object payload to send to update status when a button is pressed in modal
   */
   static async takeActionModal(body, client) {
+    const parsedValues = JSON.parse(body.actions[0].value)
+    body.channel = {
+      id: parsedValues.channel_id,
+      channel_name: parsedValues.channel_name
+    }
     debugger
     const event = {
       reaction: body.actions[0].action_id.includes("review")
         ? REVIEWED
         : APPROVED,
       item: {
-        ts: body.actions[0].value,
+        ts: parsedValues.pr_post_id,
         channel: body.channel.id
       },
       user: body.user.id
     };
-    this.computeReaction(event, client);
+    await this.computeReaction(event, client);
     const viewBlocks = await createOpenReviewsViewBlock(body);
     await client.views.update({
       token: token,
@@ -594,7 +599,7 @@ class PRReview {
         type: "modal",
         title: {
           type: "plain_text",
-          text: `Open PR Review Requests`,
+          text: `Open PR Review Updated`,
           emoji: true
         },
         close: {
@@ -669,6 +674,7 @@ class PRReview {
 }
 
 async function createOpenReviewsViewBlock(payload) {
+  debugger
   const channel_id = payload.channel.id;
   const channel_name = payload.channel.name;
   const user_id = payload.user.id;
