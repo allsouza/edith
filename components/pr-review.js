@@ -408,6 +408,7 @@ class PRReview {
   */
   static async computeReaction(event, client) {
     const channel = event.item.channel;
+    debugger
     if (event.reaction == REVIEWED || event.reaction == APPROVED) {
       const dbEntry = await MongoDB.findPR(channel, event.item.ts);
       if (dbEntry) {
