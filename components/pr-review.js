@@ -510,7 +510,8 @@ class PRReview {
       });
       if (isFromAppHome) {
         // Updates open PR modal
-        
+        debugger
+        AppHome.viewAllPRs(data, client, data.view.id)
         // Opens modal to confirm action
         client.views.push({
           token: token,

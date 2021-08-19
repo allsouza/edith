@@ -57,7 +57,7 @@ app.action("merged-button-action", ({ ack, body, client }) => {
 // Views all PRs from App Home
 app.action("view-all-prs-action", ({ ack, body, client }) => {
   ack();
-  AppHome.viewAllPRs(body, client, body)
+  AppHome.viewAllPRs(body, client)
 })
 
 // Create PR Review request from App Home
