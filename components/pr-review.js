@@ -647,10 +647,9 @@ class PRReview {
 }
 
 async function createOpenReviewsViewBlock(payload) {
-  debugger
-  const channel_id = payload.channel_id;
-  const channel_name = payload.channel_name;
-  const user_id = payload.user_id;
+  const channel_id = payload.channel.id;
+  const channel_name = payload.channel.name;
+  const user_id = payload.user.id;
   const data = await MongoDB.listChannelPRs(channel_id);
   const blocks =
     data.length > 0
