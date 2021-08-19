@@ -367,7 +367,7 @@ class PRReview {
     });
   }
 
-    /*
+  /*
     Lists open review requests in the channel
   */
   static async fetchPendingPRsModal(payload, app) {
@@ -375,16 +375,13 @@ class PRReview {
     const channel_name = payload.channel_name;
     const user_id = payload.user_id;
     const data = await MongoDB.listChannelPRs(channel_id);
-    const blocks = [
-      {
-        type: "header",
-        text: {
-          type: "plain_text",
-          text: `Open PR Reviews in ${channel_name}`,
-          emoji: true
-        }
-      }
-    ];
+    const blocks = data.length > 0 ? [] : [{
+			"type": "section",
+			"text": {
+				"type": "plain_text",
+				"text": `No open PR review requests for ${channel_name}`
+			}
+		}];
 
     //Populates the block with entries from DB
     data.forEach(entry => {
@@ -497,19 +494,23 @@ class PRReview {
     app.client.views.open({
       token: token,
       trigger_id: payload.trigger_id,
-      view:{
+      view: {
         type: "modal",
         title: {
           type: "plain_text",
-          text:
-        } `Open Review Requests in ${channel_name}`
+          text: `Open PR Review Requests`,
+          emoji: true
+        },
+        close: {
+          type: "plain_text",
+          text: "Close",
+          emoji: true
+        },
+        blocks: blocks
       }
-      blocks: blocks,
-      text: "Pending PRs should appear here",
-      user: user_id
     });
   }
-  
+
   /*
     Updates the request status according to the reaction received
   */
@@ -573,7 +574,7 @@ class PRReview {
         thread_ts: body.actions[0].value
       });
       if (isFromAppHome) {
-        console.log("Should open the other view")
+        console.log("Should open the other view");
         client.views.push({
           token: token,
           trigger_id: body.trigger_id,
