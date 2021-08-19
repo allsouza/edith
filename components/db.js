@@ -56,10 +56,11 @@ class MongoDB {
     const client = createClient();
     try {
       await client.connect();
-      return await client
+      const entry = await client
         .db()
         .collection(collectionName)
         .findOne({ pr_post_id: post_id });
+      return EncryptionEngine.decryptPRPayload(entry);
     } catch (error) {
       console.error(error);
     } finally {
