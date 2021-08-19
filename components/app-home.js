@@ -97,7 +97,6 @@ class AppHome {
     Opens a modal listing all open PRs in channels the user is part of
   */
   static async viewAllPRs(body, client, modalId=null) {
-    debugger
     let channels = await client.users.conversations({
       token: process.env.SLACK_BOT_TOKEN,
       user: body.user.id,
@@ -138,7 +137,6 @@ class AppHome {
           }
         })
       } else {
-        debugger
         await client.views.open({
         token: process.env.SLACK_BOT_TOKEN,
         trigger_id: body.trigger_id,
@@ -191,7 +189,6 @@ function createPRBlocks(data, userId) {
       }
 
       const createdAt = TimeFormatter.createdAt(entry.created_at, new Date());
-      debugger;
       const prData = JSON.stringify({
         post_id: entry.pr_post_id,
         channel_id: entry.channel_id

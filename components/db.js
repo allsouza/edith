@@ -60,6 +60,7 @@ class MongoDB {
         .db()
         .collection(collectionName)
         .findOne({ pr_post_id: post_id });
+      debugger
       return EncryptionEngine.decryptPRPayload(entry);
     } catch (error) {
       console.error(error);

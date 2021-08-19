@@ -509,9 +509,9 @@ class PRReview {
               type: "mrkdwn",
               text: `:${
                 event.reaction
-              }: The PR review request's status has been updated to ${StringUtils.capitalizeFirstLetter(
+              }: The PR review request's status has been updated to *${StringUtils.capitalizeFirstLetter(
                 event.reaction
-              )}`
+              )}*`
             }
           }
         ]
