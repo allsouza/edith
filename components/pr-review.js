@@ -108,7 +108,7 @@ class PRReview {
   }
 
   /*
-    Populates the app home
+    Saves the review request to the database and posts messages to the appropriate places
   */
   static async postPRReviewRequest(user_id, data, app) {
     const summary = data.state.values.pr_summary.summary_input.value;
