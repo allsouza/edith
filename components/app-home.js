@@ -138,6 +138,7 @@ class AppHome {
           }
         })
       } else {
+        debugger
         await client.views.open({
         token: process.env.SLACK_BOT_TOKEN,
         trigger_id: body.trigger_id,

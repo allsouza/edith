@@ -39,7 +39,7 @@ app.action("link-button-action", ({ ack }) => ack());
 // Flow to set PR Review as REVIEWED from /view_prs command
 app.action("review-pr-action", async ({ ack, body, client }) => {
   ack();
-  PRReview.takeAction(body, client);
+  body.container.type == "view" ? PRReview.takeActionModal(body, client) : PRReview.takeAction(body, client);
 });
 
 // Flow to set PR Review as APPROVED from /view_prs command

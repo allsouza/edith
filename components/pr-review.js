@@ -454,7 +454,6 @@ class PRReview {
       id: parsedValues.channel_id,
       channel_name: parsedValues.channel_name
     }
-    debugger
     const event = {
       reaction: body.actions[0].action_id.includes("review")
         ? REVIEWED
@@ -466,8 +465,9 @@ class PRReview {
       user: body.user.id
     };
     await this.computeReaction(event, client);
-    
-    // Updates modal information
+    debugger
+    if(body.channel.channel_name) {
+      // Updates modal information
     const viewBlocks = await createOpenReviewsViewBlock(body);
     await client.views.update({
       token: token,
@@ -487,6 +487,10 @@ class PRReview {
         blocks: viewBlocks
       }
     });
+    } else {
+      await AppHome.viewAllPRs(body, client, body.view.id)
+    }
+    
   }
 
   /*
