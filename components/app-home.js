@@ -112,9 +112,15 @@ class AppHome {
         channel: channel.id
       });
       if (data.length > 0)
-        PRReviews[channel_info.channel.name] = data.map(element => {
-          return { ...element, channel_id: channel.id, stats: stats[channel.id] };
-        });
+        PRReviews[channel_info.channel.name] = {
+          data: data.map(element => {
+            return {
+              ...element,
+              channel_id: channel.id
+            };
+          }),
+          stats: stats[channel.id]
+        };
     }
     try {
       const blocks = createPRBlocks(PRReviews, body.user.id);
@@ -174,8 +180,20 @@ function createPRBlocks(data, userId) {
         emoji: true
       }
     });
+    debugger;
+    blocks.push({
+      type: "context",
+      elements: [
+        {
+          type: "mrkdwn",
+          text: `_:timer_clock: Channel average review closing time is ${TimeFormatter.toString(
+            data[channel_name].stats.avg_close_in_secs
+          )}._`
+        }
+      ]
+    });
 
-    for (const entry of data[channel_name]) {
+    for (const entry of data[channel_name].data) {
       let emoji;
       switch (entry.status) {
         case "reviewed":

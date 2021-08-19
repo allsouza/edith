@@ -136,7 +136,9 @@ class MongoDB {
     const client = createClient();
     try {
       await client.connect();
-      const result = await client.db().collection('stats').find().toArray();
+      const stats = await client.db().collection('stats').find().toArray();
+      const result = {};
+      stats.forEach( stat => result[stat.channel_id] = stat);
       return result;
     } catch(error) {
       console.error(error);
