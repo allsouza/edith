@@ -27,6 +27,12 @@ app.command("/view_prs", async ({ ack, payload }) => {
   PRReview.fetchPendingPRs(payload, app);
 });
 
+// Displays all open PR Reviews in the channel in a modal
+app.command("/view_prs_modal", async ({ ack, payload }) => {
+  ack();
+  PRReview.fetchPendingPRsModal(payload, app);
+})
+
 // Simply ack when pr link button is clicked
 app.action("link-button-action", ({ ack }) => ack());
 

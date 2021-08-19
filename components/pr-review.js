@@ -367,6 +367,149 @@ class PRReview {
     });
   }
 
+    /*
+    Lists open review requests in the channel
+  */
+  static async fetchPendingPRsModal(payload, app) {
+    const channel_id = payload.channel_id;
+    const channel_name = payload.channel_name;
+    const user_id = payload.user_id;
+    const data = await MongoDB.listChannelPRs(channel_id);
+    const blocks = [
+      {
+        type: "header",
+        text: {
+          type: "plain_text",
+          text: `Open PR Reviews in ${channel_name}`,
+          emoji: true
+        }
+      }
+    ];
+
+    //Populates the block with entries from DB
+    data.forEach(entry => {
+      let emoji;
+      switch (entry.status) {
+        case "reviewed":
+          emoji = "reviewed";
+          break;
+        case "approved":
+          emoji = "approved";
+          break;
+        default:
+          emoji = "hourglass_flowing_sand";
+          break;
+      }
+
+      const createdAt = TimeFormatter.createdAt(entry.created_at, new Date());
+
+      blocks.push({
+        type: "section",
+        text: {
+          type: "mrkdwn",
+          text: `<@${entry.author}>'s ${entry.service} review request:`
+        }
+      });
+
+      blocks.push({
+        type: "section",
+        fields: [
+          {
+            type: "mrkdwn",
+            text: `*Status:*\n:${emoji}: \t${StringUtils.capitalizeFirstLetter(
+              entry.status
+            )}`
+          },
+          {
+            type: "mrkdwn",
+            text: `*Summary:*\n${entry.summary}`
+          },
+          {
+            type: "mrkdwn",
+            text: `*Created:*\n${createdAt}`
+          },
+          {
+            type: "mrkdwn",
+            text: `*Notes:*\n${entry.notes ? entry.notes : ""}`
+          }
+        ]
+      });
+
+      const buttons = [
+        {
+          type: "button",
+          text: {
+            type: "plain_text",
+            emoji: true,
+            text: ":eyes: Take a look "
+          },
+          value: "view",
+          url: `${entry.link}`,
+          action_id: "link-button-action"
+        }
+      ];
+
+      if (entry.author == payload.user_id) {
+        buttons.push({
+          type: "button",
+          text: {
+            type: "plain_text",
+            emoji: true,
+            text: ":white_check_mark: Merged"
+          },
+          style: "primary",
+          value: entry.pr_post_id,
+          action_id: "merged-button-action"
+        });
+      } else {
+        buttons.push({
+          type: "button",
+          text: {
+            type: "plain_text",
+            emoji: true,
+            text: ":approved: Approve"
+          },
+          style: "primary",
+          value: entry.pr_post_id,
+          action_id: "approve-pr-action"
+        });
+        buttons.push({
+          type: "button",
+          text: {
+            type: "plain_text",
+            emoji: true,
+            text: ":reviewed: Review"
+          },
+          style: "danger",
+          value: entry.pr_post_id,
+          action_id: "review-pr-action"
+        });
+      }
+      blocks.push({
+        type: "actions",
+        elements: buttons
+      });
+
+      blocks.push({ type: "divider" });
+    });
+
+    // Returns result to user
+    app.client.views.open({
+      token: token,
+      trigger_id: payload.trigger_id,
+      view:{
+        type: "modal",
+        title: {
+          type: "plain_text",
+          text:
+        } `Open Review Requests in ${channel_name}`
+      }
+      blocks: blocks,
+      text: "Pending PRs should appear here",
+      user: user_id
+    });
+  }
+  
   /*
     Updates the request status according to the reaction received
   */
