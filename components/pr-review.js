@@ -380,6 +380,7 @@ class PRReview {
     }
 
     const viewBlocks = await createOpenReviewsViewBlock(payload);
+    
     // Returns result to user
     app.client.views.open({
       token: token,
@@ -465,6 +466,8 @@ class PRReview {
       user: body.user.id
     };
     await this.computeReaction(event, client);
+    
+    // Updates modal information
     const viewBlocks = await createOpenReviewsViewBlock(body);
     await client.views.update({
       token: token,
@@ -506,7 +509,9 @@ class PRReview {
         thread_ts: body.actions[0].value
       });
       if (isFromAppHome) {
-        console.log("Should open the other view");
+        // Updates open PR modal
+        
+        // Opens modal to confirm action
         client.views.push({
           token: token,
           trigger_id: body.trigger_id,

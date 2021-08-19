@@ -96,7 +96,7 @@ class AppHome {
   /*
     Opens a modal listing all open PRs in channels the user is part of
   */
-  static async viewAllPRs(body, client) {
+  static async viewAllPRs(body, client, modalId = null) {
     let channels = await client.users.conversations({
       token: process.env.SLACK_BOT_TOKEN,
       user: body.user.id,
@@ -117,6 +117,11 @@ class AppHome {
     }
     try {
       const blocks = createPRBlocks(PRReviews, body.user.id);
+      if(modalId) {
+        
+      } else {
+        
+      }
       const result = await client.views.open({
         token: process.env.SLACK_BOT_TOKEN,
         trigger_id: body.trigger_id,
