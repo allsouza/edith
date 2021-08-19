@@ -408,14 +408,33 @@ class PRReview {
   */
   static async computeReaction(event, client) {
     const channel = event.item.channel;
-    debugger
     if (event.reaction == REVIEWED || event.reaction == APPROVED) {
       const dbEntry = await MongoDB.findPR(channel, event.item.ts);
+      debugger
       if (dbEntry) {
         client.chat.postMessage({
           token: token,
           channel: dbEntry.author,
-          text: `:${event.reaction}: Your PR was ${event.reaction} by <@${event.user}>`
+          text: `:${event.reaction}: Your PR was ${event.reaction} by <@${event.user}>`,
+          blocks: [
+            {
+              type: "section",
+              text: {
+                type: "mrkdwn",
+                text: `:${event.reaction}: Your PR was ${event.reaction} by <@${event.user}>`
+              },
+              accessory: {
+                type: "button",
+                text: {
+                  type: "plain_text",
+                  text: "Open PR",
+                  emoji: true
+                },
+                url: dbEntry.link,
+                action_id: "link-button-action"
+              }
+            }
+          ]
         });
 
         switch (event.reaction) {
