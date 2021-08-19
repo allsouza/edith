@@ -8,7 +8,6 @@ const createClient = () =>
   new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
 
 class MongoDB {
-
   /*
     Persists encrypted PR Review request data to database
   */

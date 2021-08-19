@@ -4,4 +4,4 @@ class StringUtils {
   }
 }
 
-module.exports = { StringUtils }
+module.exports = { StringUtils };

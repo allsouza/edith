@@ -569,17 +569,17 @@ class PRReview {
           }
         });
       }
-      } else {
-        client.chat.postEphemeral({
-          token: token,
-          text: ":octagonal_sign: Only the author can set as Merged",
-          channel: body.channel.id,
-          thread_ts: body.actions[0].value,
-          user: body.user.id
-        });
-      }
+    } else {
+      client.chat.postEphemeral({
+        token: token,
+        text: ":octagonal_sign: Only the author can set as Merged",
+        channel: body.channel.id,
+        thread_ts: body.actions[0].value,
+        user: body.user.id
+      });
     }
   }
+}
 
 async function createOpenReviewsViewBlock(payload) {
   const channel_id = payload.channel.id;

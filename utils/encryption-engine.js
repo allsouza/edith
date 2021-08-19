@@ -40,16 +40,16 @@ class EncryptionEngine {
 
     return decrypted;
   }
-  
+
   static encryptObject(object) {
-    for(const key of Object.keys(object)){
-      object[key] = encrypt(object[key])
+    for (const key of Object.keys(object)) {
+      object[key] = encrypt(object[key]);
     }
     return object;
   }
-  
+
   static decryptObject(object) {
-    for(const key of Object.keys(object)) {
+    for (const key of Object.keys(object)) {
       object[key] = decrypt(object[key]);
     }
     return object;
