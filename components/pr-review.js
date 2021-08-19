@@ -231,6 +231,9 @@ class PRReview {
     }
   }
 
+  /*
+    Lists open review requests in the channel
+  */
   static async fetchPendingPRs(payload, app) {
     const channel_id = payload.channel_id;
     const channel_name = payload.channel_name;
