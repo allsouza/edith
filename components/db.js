@@ -93,6 +93,7 @@ class MongoDB {
     const client = createClient();
     try {
       await client.connect();
+      debugger
       const data = await client
         .db()
         .collection(collectionName)
@@ -100,12 +101,12 @@ class MongoDB {
       const dbStatsData = await client
           .db()
           .collection(`stats`)
-          .findOne();
+          .findOne({channel_id: collectionName});
       if (dbStatsData) {
         await client
           .db()
           .collection(`stats`)
-          .replaceOne({ _id: dbStatsData._id }, createStatsData(dbStatsData, data, collectionName));
+          .updateOne({ _id: dbStatsData._id }, {$set: {avg_close_in}});
       } else {
         await client
           .db()
