@@ -7,11 +7,11 @@ class TimeFormatter {
     let result;
 
     if (elapsedTime < 60) {
-      result = `${Math.floor(elapsedTime)} seconds ago`;
+      result = `${Math.floor(elapsedTime)} seconds`;
     } else if (elapsedTime < 7200) {
-      result = `${Math.floor(elapsedTime / 60)} minutes ago`;
+      result = `${Math.floor(elapsedTime / 60)} minutes`;
     } else {
-      result = `${Math.floor(elapsedTime / 3600)} hours ago`;
+      result = `${Math.floor(elapsedTime / 3600)} hours`;
     }
 
     return result;
@@ -29,7 +29,7 @@ class TimeFormatter {
       count = dbData.count;
       avg = isNaN(dbData.avg_close_in_secs) ? 0 : dbData.avg_close_in_secs;
     }
-    const timeElapsed = (new Date() - new Date(prData.created_at)) / 1000;
+    const timeElapsed = (new Date() - new Date(prData.value.created_at)) / 1000;
     return Math.floor((count * avg + timeElapsed) / (count + 1.0));
   }
 }

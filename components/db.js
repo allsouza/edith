@@ -123,6 +123,7 @@ class MongoDB {
 function createStatsData(dbData, prData, collectionName) {
   const count = dbData ? dbData.count + 1 : 1;
   const avgCloseInSecs = TimeFormatter.avgClosingTime(dbData, prData);
+  debugger
   return {
     channel_id: collectionName,
     count: count,
