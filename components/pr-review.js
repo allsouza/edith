@@ -375,17 +375,24 @@ class PRReview {
     const channel_name = payload.channel_name;
     const user_id = payload.user_id;
     const data = await MongoDB.listChannelPRs(channel_id);
-    const blocks = data.length > 0 ? [] : [{
-			"type": "section",
-			"text": {
-				"type": "plain_text",
-				"text": `No open PR review requests for ${channel_name}`
-			}
-		}, {
-			"type": "image",
-			"image_url": "https://media.giphy.com/media/26hkhPJ5hmdD87HYA/giphy.gif",
-			"alt_text": "nothing"
-		}];
+    const blocks =
+      data.length > 0
+        ? []
+        : [
+            {
+              type: "section",
+              text: {
+                type: "plain_text",
+                text: `No open PR review requests for ${channel_name}`
+              }
+            },
+            {
+              type: "image",
+              image_url:
+                "https://media.giphy.com/media/26hkhPJ5hmdD87HYA/giphy.gif",
+              alt_text: "nothing"
+            }
+          ];
 
     //Populates the block with entries from DB
     data.forEach(entry => {
@@ -545,6 +552,7 @@ class PRReview {
     Prepares object payload to send to update status when a button is pressed
   */
   static async takeAction(body, client) {
+    debugger;
     const event = {
       reaction: body.actions[0].action_id.includes("review")
         ? REVIEWED
@@ -556,6 +564,25 @@ class PRReview {
       user: body.user.id
     };
     this.computeReaction(event, client);
+    const viewBlocks = await createOpenReviewsViewBlock(body);
+    await client.views.update({
+      token: token,
+      view_id: body.view.id,
+      view: {
+        type: "modal",
+        title: {
+          type: "plain_text",
+          text: `Open PR Review Requests`,
+          emoji: true
+        },
+        close: {
+          type: "plain_text",
+          text: "Close",
+          emoji: true
+        },
+        blocks: viewBlocks
+      }
+    });
   }
 
   /*
@@ -617,6 +644,140 @@ class PRReview {
       });
     }
   }
+}
+
+async function createOpenReviewsViewBlock(payload) {
+  debugger
+  const channel_id = payload.channel_id;
+  const channel_name = payload.channel_name;
+  const user_id = payload.user_id;
+  const data = await MongoDB.listChannelPRs(channel_id);
+  const blocks =
+    data.length > 0
+      ? []
+      : [
+          {
+            type: "section",
+            text: {
+              type: "plain_text",
+              text: `No open PR review requests for ${channel_name}`
+            }
+          },
+          {
+            type: "image",
+            image_url:
+              "https://media.giphy.com/media/26hkhPJ5hmdD87HYA/giphy.gif",
+            alt_text: "nothing"
+          }
+        ];
+
+  //Populates the block with entries from DB
+  data.forEach(entry => {
+    let emoji;
+    switch (entry.status) {
+      case "reviewed":
+        emoji = "reviewed";
+        break;
+      case "approved":
+        emoji = "approved";
+        break;
+      default:
+        emoji = "hourglass_flowing_sand";
+        break;
+    }
+
+    const createdAt = TimeFormatter.createdAt(entry.created_at, new Date());
+
+    blocks.push({
+      type: "section",
+      text: {
+        type: "mrkdwn",
+        text: `<@${entry.author}>'s ${entry.service} review request:`
+      }
+    });
+
+    blocks.push({
+      type: "section",
+      fields: [
+        {
+          type: "mrkdwn",
+          text: `*Status:*\n:${emoji}: \t${StringUtils.capitalizeFirstLetter(
+            entry.status
+          )}`
+        },
+        {
+          type: "mrkdwn",
+          text: `*Summary:*\n${entry.summary}`
+        },
+        {
+          type: "mrkdwn",
+          text: `*Created:*\n${createdAt}`
+        },
+        {
+          type: "mrkdwn",
+          text: `*Notes:*\n${entry.notes ? entry.notes : ""}`
+        }
+      ]
+    });
+
+    const buttons = [
+      {
+        type: "button",
+        text: {
+          type: "plain_text",
+          emoji: true,
+          text: ":eyes: Take a look "
+        },
+        value: "view",
+        url: `${entry.link}`,
+        action_id: "link-button-action"
+      }
+    ];
+
+    if (entry.author == payload.user_id) {
+      buttons.push({
+        type: "button",
+        text: {
+          type: "plain_text",
+          emoji: true,
+          text: ":white_check_mark: Merged"
+        },
+        style: "primary",
+        value: entry.pr_post_id,
+        action_id: "merged-button-action"
+      });
+    } else {
+      buttons.push({
+        type: "button",
+        text: {
+          type: "plain_text",
+          emoji: true,
+          text: ":approved: Approve"
+        },
+        style: "primary",
+        value: entry.pr_post_id,
+        action_id: "approve-pr-action"
+      });
+      buttons.push({
+        type: "button",
+        text: {
+          type: "plain_text",
+          emoji: true,
+          text: ":reviewed: Review"
+        },
+        style: "danger",
+        value: entry.pr_post_id,
+        action_id: "review-pr-action"
+      });
+    }
+    blocks.push({
+      type: "actions",
+      elements: buttons
+    });
+
+    blocks.push({ type: "divider" });
+  });
+  return blocks;
 }
 
 module.exports = { PRReview };

@@ -45,10 +45,7 @@ app.action("review-pr-action", async ({ ack, body, client }) => {
 // Flow to set PR Review as APPROVED from /view_prs command
 app.action("approve-pr-action", async ({ ack, body, payload, client }) => {
   ack();
-  debugger
   await PRReview.takeAction(body, client);
-  debugger
-  PRReview.fetchPendingPRsModal(body, app)
 });
 
 // Deletes the PR Review from DB and calculates stats
