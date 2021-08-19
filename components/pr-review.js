@@ -2,7 +2,7 @@ const { MongoDB } = require("./db.js");
 const { TimeFormatter } = require("../utils/time-formatter.js");
 const { StringUtils } = require("../utils/string-utils.js");
 const { AppHome } = require("./app-home.js");
-const { Normalizer } = require('../utils/normalizer.js');
+const { Normalizer } = require("../utils/normalizer.js");
 
 const token = process.env.SLACK_BOT_TOKEN;
 const OPEN = "open";
@@ -371,17 +371,17 @@ class PRReview {
   /*
     Lists open review requests in the channel
   */
-  static async fetchPendingPRsModal(payload, app) {    
+  static async fetchPendingPRsModal(payload, app) {
     payload.channel = {
       id: payload.channel_id,
       name: payload.channel_name
-    }
+    };
     payload.user = {
       id: payload.user_id
-    }
+    };
 
     const viewBlocks = await createOpenReviewsViewBlock(payload);
-    
+
     // Returns result to user
     app.client.views.open({
       token: token,
@@ -445,16 +445,16 @@ class PRReview {
     };
     this.computeReaction(event, client);
   }
-  
+
   /*
     Prepares object payload to send to update status when a button is pressed in modal
   */
   static async takeActionModal(body, client) {
-    const parsedValues = JSON.parse(body.actions[0].value)
+    const parsedValues = JSON.parse(body.actions[0].value);
     body.channel = {
       id: parsedValues.channel_id,
       name: parsedValues.channel_name
-    }
+    };
     const event = {
       reaction: body.actions[0].action_id.includes("review")
         ? REVIEWED
@@ -466,39 +466,14 @@ class PRReview {
       user: body.user.id
     };
     await this.computeReaction(event, client);
-    debugger
-    if(body.channel.name) {
-      // Updates modal information
-    const viewBlocks = await createOpenReviewsViewBlock(body);
-    await client.views.update({
-      token: token,
-      view_id: body.view.id,
-      view: {
-        type: "modal",
-        title: {
-          type: "plain_text",
-          text: `Open PR Review Requests`,
-          emoji: true
-        },
-        close: {
-          type: "plain_text",
-          text: "Close",
-          emoji: true
-        },
-        blocks: viewBlocks
-      }
-    });
-    } else {
-      await AppHome.viewAllPRs(body, client, body.view.id)
-    }
-    
+    updateView(body, client);
   }
 
   /*
     Removes request from DB and sends message in thread to say the PR was merged
   */
   static async mergedPR(data, client) {
-    debugger
+    debugger;
     const body = Normalizer.normalizeBody(data);
     const origin = Boolean(body.channel.name) ? "channel" : "appHome";
     const dbEntry = await MongoDB.findPR(
@@ -514,10 +489,8 @@ class PRReview {
         channel: body.channel.id,
         thread_ts: body.actions[0].value
       });
-      if (origin == "appHome") {
-        // Updates open PR modal
-        debugger
-        AppHome.viewAllPRs(data, client, data.view.id)
+      if (origin) {
+        updateView(body, client);
         // Opens modal to confirm action
         client.views.push({
           token: token,
@@ -546,158 +519,182 @@ class PRReview {
             ]
           }
         });
-      } else if(origin == "channel") {
-        PRReview.fetch
+      } else {
+        client.chat.postEphemeral({
+          token: token,
+          text: ":octagonal_sign: Only the author can set as Merged",
+          channel: body.channel.id,
+          thread_ts: body.actions[0].value,
+          user: body.user.id
+        });
       }
-    } else {
-      client.chat.postEphemeral({
-        token: token,
-        text: ":octagonal_sign: Only the author can set as Merged",
-        channel: body.channel.id,
-        thread_ts: body.actions[0].value,
-        user: body.user.id
-      });
     }
   }
 }
 
 async function createOpenReviewsViewBlock(payload) {
-  debugger
+  debugger;
   const channel_id = payload.channel.id;
   const channel_name = payload.channel.name;
   const user_id = payload.user.id;
   const data = await MongoDB.listChannelPRs(channel_id);
-    const blocks =
-      data.length > 0
-        ? []
-        : [
-            {
-              type: "section",
-              text: {
-                type: "plain_text",
-                text: `No open PR review requests for ${channel_name}`
-              }
-            },
-            {
-              type: "image",
-              image_url:
-                "https://media.giphy.com/media/26hkhPJ5hmdD87HYA/giphy.gif",
-              alt_text: "nothing"
+  const blocks =
+    data.length > 0
+      ? []
+      : [
+          {
+            type: "section",
+            text: {
+              type: "plain_text",
+              text: `No open PR review requests for ${channel_name}`
             }
-          ];
-
-    //Populates the block with entries from DB
-    data.forEach(entry => {
-      let emoji;
-      switch (entry.status) {
-        case "reviewed":
-          emoji = "reviewed";
-          break;
-        case "approved":
-          emoji = "approved";
-          break;
-        default:
-          emoji = "hourglass_flowing_sand";
-          break;
-      }
-
-      const createdAt = TimeFormatter.createdAt(entry.created_at, new Date());
-      const info = JSON.stringify({
-        channel_id: channel_id,
-        channel_name: channel_name,
-        pr_post_id: entry.pr_post_id
-      })
-
-      blocks.push({
-        type: "section",
-        text: {
-          type: "mrkdwn",
-          text: `<@${entry.author}>'s ${entry.service} review request:`
-        }
-      });
-
-      blocks.push({
-        type: "section",
-        fields: [
-          {
-            type: "mrkdwn",
-            text: `*Status:*\n:${emoji}: \t${StringUtils.capitalizeFirstLetter(
-              entry.status
-            )}`
           },
           {
-            type: "mrkdwn",
-            text: `*Summary:*\n${entry.summary}`
-          },
-          {
-            type: "mrkdwn",
-            text: `*Created:*\n${createdAt}`
-          },
-          {
-            type: "mrkdwn",
-            text: `*Notes:*\n${entry.notes ? entry.notes : ""}`
+            type: "image",
+            image_url:
+              "https://media.giphy.com/media/26hkhPJ5hmdD87HYA/giphy.gif",
+            alt_text: "nothing"
           }
-        ]
-      });
+        ];
 
-      const buttons = [
-        {
-          type: "button",
-          text: {
-            type: "plain_text",
-            emoji: true,
-            text: ":eyes: Take a look "
-          },
-          value: "view",
-          url: `${entry.link}`,
-          action_id: "link-button-action"
-        }
-      ];
+  //Populates the block with entries from DB
+  data.forEach(entry => {
+    let emoji;
+    switch (entry.status) {
+      case "reviewed":
+        emoji = "reviewed";
+        break;
+      case "approved":
+        emoji = "approved";
+        break;
+      default:
+        emoji = "hourglass_flowing_sand";
+        break;
+    }
 
-      if (entry.author == payload.user.id) {
-        buttons.push({
-          type: "button",
-          text: {
-            type: "plain_text",
-            emoji: true,
-            text: ":white_check_mark: Merged"
-          },
-          style: "primary",
-          value: info,
-          action_id: "merged-button-action"
-        });
-      } else {
-        buttons.push({
-          type: "button",
-          text: {
-            type: "plain_text",
-            emoji: true,
-            text: ":approved: Approve"
-          },
-          style: "primary",
-          value: info,
-          action_id: "approve-pr-action"
-        });
-        buttons.push({
-          type: "button",
-          text: {
-            type: "plain_text",
-            emoji: true,
-            text: ":reviewed: Review"
-          },
-          style: "danger",
-          value: info,
-          action_id: "review-pr-action"
-        });
-      }
-      blocks.push({
-        type: "actions",
-        elements: buttons
-      });
-
-      blocks.push({ type: "divider" });
+    const createdAt = TimeFormatter.createdAt(entry.created_at, new Date());
+    const info = JSON.stringify({
+      channel_id: channel_id,
+      channel_name: channel_name,
+      pr_post_id: entry.pr_post_id
     });
+
+    blocks.push({
+      type: "section",
+      text: {
+        type: "mrkdwn",
+        text: `<@${entry.author}>'s ${entry.service} review request:`
+      }
+    });
+
+    blocks.push({
+      type: "section",
+      fields: [
+        {
+          type: "mrkdwn",
+          text: `*Status:*\n:${emoji}: \t${StringUtils.capitalizeFirstLetter(
+            entry.status
+          )}`
+        },
+        {
+          type: "mrkdwn",
+          text: `*Summary:*\n${entry.summary}`
+        },
+        {
+          type: "mrkdwn",
+          text: `*Created:*\n${createdAt}`
+        },
+        {
+          type: "mrkdwn",
+          text: `*Notes:*\n${entry.notes ? entry.notes : ""}`
+        }
+      ]
+    });
+
+    const buttons = [
+      {
+        type: "button",
+        text: {
+          type: "plain_text",
+          emoji: true,
+          text: ":eyes: Take a look "
+        },
+        value: "view",
+        url: `${entry.link}`,
+        action_id: "link-button-action"
+      }
+    ];
+
+    if (entry.author == payload.user.id) {
+      buttons.push({
+        type: "button",
+        text: {
+          type: "plain_text",
+          emoji: true,
+          text: ":white_check_mark: Merged"
+        },
+        style: "primary",
+        value: info,
+        action_id: "merged-button-action"
+      });
+    } else {
+      buttons.push({
+        type: "button",
+        text: {
+          type: "plain_text",
+          emoji: true,
+          text: ":approved: Approve"
+        },
+        style: "primary",
+        value: info,
+        action_id: "approve-pr-action"
+      });
+      buttons.push({
+        type: "button",
+        text: {
+          type: "plain_text",
+          emoji: true,
+          text: ":reviewed: Review"
+        },
+        style: "danger",
+        value: info,
+        action_id: "review-pr-action"
+      });
+    }
+    blocks.push({
+      type: "actions",
+      elements: buttons
+    });
+
+    blocks.push({ type: "divider" });
+  });
   return blocks;
+}
+
+async function updateView(body, client) {
+  if (body.channel.name) {
+    const viewBlocks = await createOpenReviewsViewBlock(body);
+    await client.views.update({
+      token: token,
+      view_id: body.view.id,
+      view: {
+        type: "modal",
+        title: {
+          type: "plain_text",
+          text: `Open PR Review Requests`,
+          emoji: true
+        },
+        close: {
+          type: "plain_text",
+          text: "Close",
+          emoji: true
+        },
+        blocks: viewBlocks
+      }
+    });
+  } else {
+    await AppHome.viewAllPRs(body, client, body.view.id);
+  }
 }
 
 module.exports = { PRReview };
