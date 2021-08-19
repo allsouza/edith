@@ -21,14 +21,14 @@ app.view("pr_review_modal_view", ({ ack, body, view }) => {
   PRReview.postPRReviewRequest(body.user.id, view, app);
 });
 
-// Displays all the open PR Reviews in the channel
-app.command("/view_prs", async ({ ack, payload }) => {
-  ack();
-  PRReview.fetchPendingPRs(payload, app);
-});
+// // Displays all the open PR Reviews in the channel
+// app.command("/view_prs", async ({ ack, payload }) => {
+//   ack();
+//   PRReview.fetchPendingPRs(payload, app);
+// });
 
 // Displays all open PR Reviews in the channel in a modal
-app.command("/view_prs_modal", async ({ ack, payload }) => {
+app.command("/view_prs", async ({ ack, payload }) => {
   ack();
   PRReview.fetchPendingPRsModal(payload, app);
 })
