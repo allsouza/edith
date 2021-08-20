@@ -93,25 +93,35 @@ class MongoDB {
     const client = createClient();
     try {
       await client.connect();
-      debugger
+      debugger;
       const data = await client
         .db()
         .collection(collectionName)
         .findOneAndDelete({ pr_post_id: id });
       const dbStatsData = await client
-          .db()
-          .collection(`stats`)
-          .findOne({channel_id: collectionName});
+        .db()
+        .collection(`stats`)
+        .findOne({ channel_id: collectionName });
       if (dbStatsData) {
         await client
           .db()
           .collection(`stats`)
-          .updateOne({ _id: dbStatsData._id }, {$set: {avg_close_in_sec: TimeFormatter.avgClosingTime(dbStatsData, data)}});
+          .updateOne(
+            { _id: dbStatsData._id },
+            {
+              $set: {
+                avg_close_in_secs: TimeFormatter.avgClosingTime(
+                  dbStatsData,
+                  data
+                )
+              }
+            }
+          );
       } else {
         await client
           .db()
           .collection(`stats`)
-          .insertOne(createStatsData(data, collectionName));
+          .insertOne(createStatsData(data, collectionName, "close"));
       }
     } catch (error) {
       console.error(error);
@@ -119,25 +129,35 @@ class MongoDB {
       client.close();
     }
   }
-  
+
   static async setFirstInteractionAvg(collectionName, event) {
     const client = createClient();
     try {
       await client.connect();
-      debugger
+      debugger;
       const data = await client
         .db()
         .collection(collectionName)
         .findOne({ pr_post_id: event.item.ts });
       const dbStatsData = await client
-          .db()
-          .collection(`stats`)
-          .findOne({channel_id: collectionName});
+        .db()
+        .collection(`stats`)
+        .findOne({ channel_id: collectionName });
       if (dbStatsData) {
         await client
           .db()
           .collection(`stats`)
-          .updateOne({ _id: dbStatsData._id }, {$set: {avg_first_interaction_in_sec: TimeFormatter.avgFirstInteractionTime(dbStatsData, data)}});
+          .updateOne(
+            { _id: dbStatsData._id },
+            {
+              $set: {
+                avg_first_interaction_in_secs: TimeFormatter.avgFirstInteractionTime(
+                  dbStatsData,
+                  data
+                )
+              }
+            }
+          );
       } else {
         await client
           .db()
@@ -150,29 +170,36 @@ class MongoDB {
       client.close();
     }
   }
-  
+
   static async getChannelStats(channel_id) {
     const client = createClient();
     try {
       await client.connect();
-      const result = await client.db().collection('stats').findOne({channel_id})
+      const result = await client
+        .db()
+        .collection("stats")
+        .findOne({ channel_id });
       return result;
-    } catch(error) {
-      console.error(error)
+    } catch (error) {
+      console.error(error);
     } finally {
       client.close();
     }
   }
-  
+
   static async getAllStats() {
     const client = createClient();
     try {
       await client.connect();
-      const stats = await client.db().collection('stats').find().toArray();
+      const stats = await client
+        .db()
+        .collection("stats")
+        .find()
+        .toArray();
       const result = {};
-      stats.forEach( stat => result[stat.channel_id] = stat);
+      stats.forEach(stat => (result[stat.channel_id] = stat));
       return result;
-    } catch(error) {
+    } catch (error) {
       console.error(error);
     } finally {
       client.close();
@@ -181,14 +208,28 @@ class MongoDB {
 }
 
 function createStatsData(prData, collectionName, type) {
-  const count = 1;
-  const avgFirstInteractionInSecs = TimeFormatter.avgFirstInteractionTime(null, prData);
-  return {
-    channel_id: collectionName,
-    count: count,
-    avg_first_interaction_in_secs: avgFirstInteractionInSecs,
-    avg_close_in_secs: 0
-  };
+  if (type == "interaction") {
+    const count = 1;
+    const avgFirstInteractionInSecs = TimeFormatter.avgFirstInteractionTime(
+      null,
+      prData
+    );
+    return {
+      channel_id: collectionName,
+      count: count,
+      avg_first_interaction_in_secs: avgFirstInteractionInSecs,
+      avg_close_in_secs: 0
+    };
+  } else {
+    const count = 1;
+    const avgCloseInSecs = TimeFormatter.avgClosingTime(null, prData);
+    return {
+      channel_id: collectionName,
+      count: count,
+      avg_first_interaction_in_secs: avgCloseInSecs,
+      avg_close_in_secs: avgCloseInSecs
+    };
+  }
 }
 
 module.exports = { MongoDB };

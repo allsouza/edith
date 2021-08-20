@@ -31,7 +31,7 @@ class TimeFormatter {
       count = dbData.count;
       avg = isNaN(dbData.avg_first_interaction_in_secs) ? 0 : dbData.avg_first_interaction_in_secs;
     }
-    const timeElapsed = (new Date() - new Date(prData.value.created_at)) / 1000;
+    const timeElapsed = (new Date() - new Date(prData.created_at)) / 1000;
     return Math.floor((count * avg + timeElapsed) / (count + 1.0));
   }
   
