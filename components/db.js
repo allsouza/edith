@@ -106,12 +106,43 @@ class MongoDB {
         await client
           .db()
           .collection(`stats`)
-          .updateOne({ _id: dbStatsData._id }, {$set: {avg_close_in}});
+          .updateOne({ _id: dbStatsData._id }, {$set: {avg_close_in_sec: TimeFormatter.avgClosingTime(dbStatsData, data)}});
       } else {
         await client
           .db()
           .collection(`stats`)
-          .insertOne(createStatsData(null, data, collectionName));
+          .insertOne(createStatsData(data, collectionName));
+      }
+    } catch (error) {
+      console.error(error);
+    } finally {
+      client.close();
+    }
+  }
+  
+  static async setFirstInteractionAvg(collectionName, prReviewRequest) {
+    const client = createClient();
+    try {
+      await client.connect();
+      debugger
+      // const data = await client
+      //   .db()
+      //   .collection(collectionName)
+      //   .findOneAndDelete({ pr_post_id: id });
+      const dbStatsData = await client
+          .db()
+          .collection(`stats`)
+          .findOne({channel_id: collectionName});
+      if (dbStatsData) {
+        await client
+          .db()
+          .collection(`stats`)
+          .updateOne({ _id: dbStatsData._id }, {$set: {avg_first_interaction_in_sec: TimeFormatter.avgFirstInteractionTime(dbStatsData, prReviewRequest)}});
+      } else {
+        await client
+          .db()
+          .collection(`stats`)
+          .insertOne(createStatsData(prReviewRequest, collectionName));
       }
     } catch (error) {
       console.error(error);
@@ -149,14 +180,14 @@ class MongoDB {
   }
 }
 
-function createStatsData(dbData, prData, collectionName) {
-  const count = dbData ? dbData.count + 1 : 1;
-  const avgCloseInSecs = TimeFormatter.avgClosingTime(dbData, prData);
-  debugger
+function createStatsData(prData, collectionName) {
+  const count = 1;
+  const avgFirstInteractionInSecs = TimeFormatter.avgFirstInteractionTime(null, prData);
   return {
     channel_id: collectionName,
     count: count,
-    avg_close_in_secs: avgCloseInSecs
+    avg_first_interaction_in_secs: avgFirstInteractionInSecs,
+    avg_close_in_secs: 0
   };
 }
 
