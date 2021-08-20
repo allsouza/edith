@@ -120,15 +120,15 @@ class MongoDB {
     }
   }
   
-  static async setFirstInteractionAvg(collectionName, prReviewRequest) {
+  static async setFirstInteractionAvg(collectionName, event) {
     const client = createClient();
     try {
       await client.connect();
       debugger
-      // const data = await client
-      //   .db()
-      //   .collection(collectionName)
-      //   .findOneAndDelete({ pr_post_id: id });
+      const data = await client
+        .db()
+        .collection(collectionName)
+        .findOne({ pr_post_id: event.item.ts });
       const dbStatsData = await client
           .db()
           .collection(`stats`)
@@ -137,12 +137,12 @@ class MongoDB {
         await client
           .db()
           .collection(`stats`)
-          .updateOne({ _id: dbStatsData._id }, {$set: {avg_first_interaction_in_sec: TimeFormatter.avgFirstInteractionTime(dbStatsData, prReviewRequest)}});
+          .updateOne({ _id: dbStatsData._id }, {$set: {avg_first_interaction_in_sec: TimeFormatter.avgFirstInteractionTime(dbStatsData, data)}});
       } else {
         await client
           .db()
           .collection(`stats`)
-          .insertOne(createStatsData(prReviewRequest, collectionName));
+          .insertOne(createStatsData(data, collectionName, "interaction"));
       }
     } catch (error) {
       console.error(error);
@@ -180,7 +180,7 @@ class MongoDB {
   }
 }
 
-function createStatsData(prData, collectionName) {
+function createStatsData(prData, collectionName, type) {
   const count = 1;
   const avgFirstInteractionInSecs = TimeFormatter.avgFirstInteractionTime(null, prData);
   return {

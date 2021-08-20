@@ -24,6 +24,7 @@ class TimeFormatter {
   }
   
   static avgFirstInteractionTime(dbData, prData) {
+    debugger
     let count = 0;
     let avg = 0;
     if (dbData) {

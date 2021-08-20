@@ -411,6 +411,7 @@ class PRReview {
     if (event.reaction == REVIEWED || event.reaction == APPROVED) {
       const dbEntry = await MongoDB.findPR(channel, event.item.ts);
       if (dbEntry) {
+        if(dbEntry.status == OPEN) await MongoDB.setFirstInteractionAvg(event.item.channel, event);
         client.chat.postMessage({
           token: token,
           channel: dbEntry.author,
