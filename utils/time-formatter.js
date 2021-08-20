@@ -37,7 +37,7 @@ class TimeFormatter {
   
   static toString(time) {
     let result;
-        if (time < 60) {
+        if (time < 120) {
       result = `${Math.floor(time)} seconds`;
     } else if (time < 7200) {
       result = `${Math.floor(time / 60)} minutes`;

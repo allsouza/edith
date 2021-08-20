@@ -180,18 +180,33 @@ function createPRBlocks(data, userId) {
         emoji: true
       }
     });
-    debugger;
     blocks.push({
       type: "context",
       elements: [
         {
           type: "mrkdwn",
-          text: `_:timer_clock: Channel average review closing time is ${TimeFormatter.toString(
-            data[channel_name].stats.avg_close_in_secs
-          )}._`
+          text: ":timer_clock: Channel Stats:"
         }
       ]
     });
+    blocks.push({
+      type: "context",
+      elements: [
+        {
+          type: "mrkdwn",
+          text: `Avg first reaction: ${TimeFormatter.toString(
+            data[channel_name].stats.avg_first_interaction_in_secs
+          )}`
+        },
+        {
+          type: "mrkdwn",
+          text: `Avg closing time: ${TimeFormatter.toString(
+            data[channel_name].stats.avg_close_in_secs
+          )}`
+        }
+      ]
+    });
+    blocks.push({ type: "divider" });
 
     for (const entry of data[channel_name].data) {
       let emoji;
