@@ -411,7 +411,8 @@ class PRReview {
     if (event.reaction == REVIEWED || event.reaction == APPROVED) {
       const dbEntry = await MongoDB.findPR(channel, event.item.ts);
       if (dbEntry) {
-        if(dbEntry.status == OPEN) await MongoDB.setFirstInteractionAvg(event.item.channel, event);
+        if (dbEntry.status == OPEN)
+          await MongoDB.setFirstInteractionAvg(event.item.channel, event);
         client.chat.postMessage({
           token: token,
           channel: dbEntry.author,
@@ -535,13 +536,18 @@ class PRReview {
       await MongoDB.finalizePR(body.channel.id, body.actions[0].value);
       client.chat.postMessage({
         token: token,
-        blocks: [{
-          type: "section",
-          text: {
-            type: "mrkdwn",
-            text: `:checkered_flag: Pull Request merged. Thank you all! \n_Completion time: ${TimeFormatter.getDifference(new Date(dbEntry.created_at), new Date())}_`
+        blocks: [
+          {
+            type: "section",
+            text: {
+              type: "mrkdwn",
+              text: `:checkered_flag: Pull Request merged. Thank you all! \n_Completion time: ${TimeFormatter.getDifference(
+                new Date(dbEntry.created_at),
+                new Date()
+              )}_`
+            }
           }
-        }],
+        ],
         text: ":checkered_flag: Pull Request merged. Thank you all!",
         channel: body.channel.id,
         thread_ts: body.actions[0].value
@@ -595,33 +601,52 @@ async function createOpenReviewsViewBlock(payload) {
   const user_id = payload.user.id;
   const data = await MongoDB.listChannelPRs(channel_id);
   const stats = await MongoDB.getChannelStats(channel_id);
-  const avgTimeMessage = `_:timer_clock: Channel average review closing time is ${TimeFormatter.toString(stats.avg_close_in_secs)}._`;
-  const blocks =
-    data.length > 0
-      ? [{
-			"type": "context",
-			"elements": [
-				{
-					"type": "mrkdwn",
-					"text": avgTimeMessage
-				}
-			]
-		}]
-      : [
-          {
-            type: "section",
-            text: {
-              type: "mrkdwn",
-              text: `No open PR review requests for ${channel_name}.\n ${avgTimeMessage}`
-            }
-          },
-          {
-            type: "image",
-            image_url:
-              "https://media.giphy.com/media/26hkhPJ5hmdD87HYA/giphy.gif",
-            alt_text: "nothing"
-          }
-        ];
+  const blocks = [
+    {
+      type: "context",
+      elements: [
+        {
+          type: "mrkdwn",
+          text: ":timer_clock: Channel Stats:"
+        }
+      ]
+    },
+    {
+      type: "context",
+      elements: [
+        {
+          type: "mrkdwn",
+          text: `Avg first reaction: ${TimeFormatter.toString(
+            stats.avg_first_interaction_in_secs
+          )}`
+        },
+        {
+          type: "mrkdwn",
+          text: `Avg closing time: ${TimeFormatter.toString(
+            stats.avg_close_in_secs
+          )}`
+        }
+      ]
+    },
+    { type: "divider" }
+  ];
+  if (data.length == 0) {
+    console.log("NO DATA")
+    blocks.push(
+      {
+        type: "section",
+        text: {
+          type: "mrkdwn",
+          text: `No open PR review requests for ${channel_name}.`
+        }
+      },
+      {
+        type: "image",
+        image_url: "https://media.giphy.com/media/26hkhPJ5hmdD87HYA/giphy.gif",
+        alt_text: "nothing"
+      }
+    );
+  }
 
   //Populates the block with entries from DB
   data.forEach(entry => {
