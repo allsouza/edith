@@ -120,7 +120,7 @@ class PRReview {
       data.state.values.channel_select.channel_select.selected_conversation;
 
     try {
-      const message = `:bitbucket: *Hey team, please review this ${service} PR for <@${user_id}>*.\n _Summary: ${summary}_`;
+      const message = `:bitbucket: *<!here|here> Hey team, please review this ${service} PR for <@${user_id}>*.\n _Summary: ${summary}_`;
 
       const result = await app.client.chat.postMessage({
         token: token,
