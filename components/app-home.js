@@ -97,72 +97,52 @@ class AppHome {
     Opens a modal listing all open PRs in channels the user is part of
   */
   static async viewAllPRs(body, client, modalId = null) {
-    let channels = await client.users.conversations({
-      token: process.env.SLACK_BOT_TOKEN,
-      user: body.user.id,
-      types: "public_channel, private_channel"
-    });
-    channels = channels.channels;
-    const stats = await MongoDB.getAllStats();
-    const PRReviews = {};
-    for (const channel of channels) {
-      const data = await MongoDB.listChannelPRs(channel.id);
-      const channel_info = await client.conversations.info({
-        token: process.env.SLACK_BOT_TOKEN,
-        channel: channel.id
-      });
-      if (data.length > 0)
-        PRReviews[channel_info.channel.name] = {
-          data: data.map(element => {
-            return {
-              ...element,
-              channel_id: channel.id
-            };
-          }),
-          stats: stats[channel.id]
-        };
-    }
     try {
-      const blocks = createPRBlocks(PRReviews, body.user.id);
-      if (modalId) {
-        client.views.update({
+      if (modalId == null) modalId = await loadingModal(client, body);
+      let channels = await client.users.conversations({
+        token: process.env.SLACK_BOT_TOKEN,
+        user: body.user.id,
+        types: "public_channel, private_channel"
+      });
+      channels = channels.channels;
+      const stats = await MongoDB.getAllStats();
+      const PRReviews = {};
+      for (const channel of channels) {
+        const data = await MongoDB.listChannelPRs(channel.id);
+        const channel_info = await client.conversations.info({
           token: process.env.SLACK_BOT_TOKEN,
-          view_id: modalId,
-          view: {
-            type: "modal",
-            title: {
-              type: "plain_text",
-              text: "All open PR Reviews",
-              emoji: true
-            },
-            close: {
-              type: "plain_text",
-              text: "Close",
-              emoji: true
-            },
-            blocks: blocks
-          }
+          channel: channel.id
         });
-      } else {
-        await client.views.open({
-          token: process.env.SLACK_BOT_TOKEN,
-          trigger_id: body.trigger_id,
-          view: {
-            type: "modal",
-            title: {
-              type: "plain_text",
-              text: "All open PR Reviews",
-              emoji: true
-            },
-            close: {
-              type: "plain_text",
-              text: "Close",
-              emoji: true
-            },
-            blocks: blocks
-          }
-        });
+        if (data.length > 0)
+          PRReviews[channel_info.channel.name] = {
+            data: data.map(element => {
+              return {
+                ...element,
+                channel_id: channel.id
+              };
+            }),
+            stats: stats[channel.id]
+          };
       }
+      const blocks = createPRBlocks(PRReviews, body.user.id);
+      client.views.update({
+        token: process.env.SLACK_BOT_TOKEN,
+        view_id: modalId,
+        view: {
+          type: "modal",
+          title: {
+            type: "plain_text",
+            text: "All open PR Reviews",
+            emoji: true
+          },
+          close: {
+            type: "plain_text",
+            text: "Close",
+            emoji: true
+          },
+          blocks: blocks
+        }
+      });
     } catch (error) {
       console.error(error);
     }
@@ -320,6 +300,49 @@ function createPRBlocks(data, userId) {
     blocks.push({ type: "divider" });
   }
   return blocks;
+}
+
+async function loadingModal(client, body) {
+  const modal = await client.views.open({
+    token: process.env.SLACK_BOT_TOKEN,
+    trigger_id: body.trigger_id,
+    view: {
+      type: "modal",
+      title: {
+        type: "plain_text",
+        text: "Locating Open Requests",
+        emoji: true
+      },
+      close: {
+        type: "plain_text",
+        text: "Close",
+        emoji: true
+      },
+      blocks: [
+        {
+          type: "section",
+          text: {
+            type: "mrkdwn",
+            text: "Locating requests in all channels you are a member of."
+          }
+        },
+        {
+          type: "image",
+          image_url:
+            "https://cdn.dribbble.com/users/543872/screenshots/3440651/untitled-6.gif",
+          alt_text: "loading"
+        },
+        {
+          type: "section",
+          text: {
+            type: "mrkdwn",
+            text: "Please be patient"
+          }
+        }
+      ]
+    }
+  });
+  return modal.view.id;
 }
 
 module.exports = { AppHome };
