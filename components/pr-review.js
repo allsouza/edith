@@ -118,14 +118,18 @@ class PRReview {
   */
   static async postPRReviewRequest(authorId, data, app) {
     const summary = data.state.values.pr_summary.summary_input.value;
-    const link = data.state.values.pr_link.link_input.value;
     const service = data.state.values.pr_service.service_input.value;
     const channel_id =
       data.state.values.channel_select.channel_select.selected_conversation;
     const usersToNotify =
       data.state.values.notify_users.selected_users.selected_users;
+    let link = data.state.values.pr_link.link_input.value;
 
     try {
+      if (!/^https?:\/\//i.test(link)) {
+        link = 'http://' + link;
+      }
+      
       const dbObject = {
         summary,
         service,
