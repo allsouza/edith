@@ -118,14 +118,18 @@ class PRReview {
   */
   static async postPRReviewRequest(authorId, data, app) {
     const summary = data.state.values.pr_summary.summary_input.value;
-    const link = data.state.values.pr_link.link_input.value;
     const service = data.state.values.pr_service.service_input.value;
     const channel_id =
       data.state.values.channel_select.channel_select.selected_conversation;
     const usersToNotify =
       data.state.values.notify_users.selected_users.selected_users;
+    let link = data.state.values.pr_link.link_input.value;
 
     try {
+      if (!/^https?:\/\//i.test(link)) {
+        link = 'http://' + link;
+      }
+      
       const dbObject = {
         summary,
         service,
@@ -601,6 +605,13 @@ class PRReview {
             ],
           },
         });
+      } else {
+        client.chat.postEphemeral({
+        token: token,
+        channel: dbEntry.author,
+        user: dbEntry.author,
+        text: `:checkered_flag: Successfully marked ${dbEntry.service} PR review request as merged!`,
+      });
       }
     } else {
       client.chat.postEphemeral({
@@ -671,10 +682,12 @@ class PRReview {
   static async nudgeReviewer(body, client) {
     const values = JSON.parse(body.actions[0].value);
     const dbEntry = values.dbEntry;
+    const message = body.message.text;
+    const reviewerId = message.substring(message.indexOf('@')+1, message.lastIndexOf('>'));
     debugger;
     client.chat.postMessage({
       token,
-      channel: dbEntry.author,
+      channel: reviewerId,
       text: `<@${dbEntry.author}> has addressed your comments for their PR at ${dbEntry.link}`,
       blocks: [
         {
