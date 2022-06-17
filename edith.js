@@ -59,6 +59,11 @@ app.action("delete-button-action", ({ack, body, client}) => {
   PRReview.cancelPR(body, client);
 })
 
+app.action("nudge-reviewer-action", ({ack, body, client}) => {
+  ack();
+  PRReview.nudgeReviewer(body, client);
+})
+
 // Views all PRs from App Home
 app.action("view-all-prs-action", ({ ack, body, client }) => {
   ack();

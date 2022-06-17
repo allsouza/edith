@@ -137,7 +137,7 @@ class PRReview {
       //Save to DB
       const dbEntryId = JSON.stringify({
         id: await MongoDB.savePR(channel_id, dbObject),
-        channel_id
+        channel_id,
       });
 
       // Posts feedback to the author
@@ -165,46 +165,46 @@ class PRReview {
               type: "section",
               text: {
                 type: "mrkdwn",
-                text: `<@${authorId}> is asking you to review their ${service} PR. \nSummary: ${summary}`,
-              }
+                text: `<@${authorId}> is asking you to review their *${service}* PR. \nSummary: ${summary}`,
+              },
             },
             {
               type: "actions",
               elements: [
                 {
-                type: "button",
-                text: {
-                  type: "plain_text",
-                  text: "View PR",
-                  emoji: true,
+                  type: "button",
+                  text: {
+                    type: "plain_text",
+                    text: "View PR",
+                    emoji: true,
+                  },
+                  url: link,
+                  action_id: "link-button-action",
                 },
-                url: link,
-                action_id: "link-button-action",
-              },
-              {
-                type: "button",
-                text: {
-                  type: "plain_text",
-                  emoji: true,
-                  text: ":reviewed: Review",
+                {
+                  type: "button",
+                  text: {
+                    type: "plain_text",
+                    emoji: true,
+                    text: ":reviewed: Review",
+                  },
+                  style: "danger",
+                  value: dbEntryId,
+                  action_id: "review-pr-action",
                 },
-                style: "danger",
-                value: dbEntryId,
-                action_id: "review-pr-action",
-              },
-              {
-                type: "button",
-                text: {
-                  type: "plain_text",
-                  emoji: true,
-                  text: ":approved: Approve",
+                {
+                  type: "button",
+                  text: {
+                    type: "plain_text",
+                    emoji: true,
+                    text: ":approved: Approve",
+                  },
+                  style: "primary",
+                  value: dbEntryId,
+                  action_id: "approve-pr-action",
                 },
-                style: "primary",
-                value: dbEntryId,
-                action_id: "approve-pr-action",
-              }
-              ]
-            }
+              ],
+            },
           ],
         });
       });
@@ -408,24 +408,26 @@ class PRReview {
     Updates the request status according to the reaction received
   */
   static async computeReaction(event, client) {
-    debugger
+    debugger;
     const channel = event.item.channel;
     if (event.reaction == REVIEWED || event.reaction == APPROVED) {
       const dbEntry = await MongoDB.findPR(channel, event.item.value);
-      const buttons = [{
-                    type: "button",
-                    text: {
-                      type: "plain_text",
-                      text: "View PR",
-                      emoji: true,
-                    },
-                    url: dbEntry.link,
-                    action_id: "link-button-action",
-                  }];
+      const buttons = [
+        {
+          type: "button",
+          text: {
+            type: "plain_text",
+            text: "View PR",
+            emoji: true,
+          },
+          url: dbEntry.link,
+          action_id: "link-button-action",
+        },
+      ];
       if (dbEntry) {
         if (dbEntry.status == OPEN)
           await MongoDB.setFirstInteractionAvg(event.item.channel, event);
-        if(event.reaction == APPROVED) {
+        if (event.reaction == APPROVED) {
           buttons.unshift({
             type: "button",
             text: {
@@ -434,9 +436,20 @@ class PRReview {
               text: ":white_check_mark: Merged",
             },
             style: "primary",
-            value: JSON.stringify({id: dbEntry._id, channel_id: channel}),
+            value: JSON.stringify({ id: dbEntry._id, channel_id: channel }),
             action_id: "merged-button-action",
-          })
+          });
+        } else {
+          buttons.unshift({
+            type: "button",
+            text: {
+              type: "plain_text",
+              emoji: true,
+              text: "Nudge Reviewer",
+            },
+            value: JSON.stringify({ dbEntry, channel_id: channel }),
+            action_id: "nudge-reviewer-action",
+          });
         }
         client.chat.postMessage({
           token: token,
@@ -448,12 +461,12 @@ class PRReview {
               text: {
                 type: "mrkdwn",
                 text: `:${event.reaction}: Your ${dbEntry.service} PR was *${event.reaction}* by <@${event.user}>`,
-              }
+              },
             },
             {
               type: "actions",
-              elements: buttons
-            }
+              elements: buttons,
+            },
           ],
         });
 
@@ -490,7 +503,7 @@ class PRReview {
     Prepares object payload to send to update status when a button is pressed in modal
   */
   static async takeAction(body, client) {
-    debugger
+    debugger;
     const parsedValues = JSON.parse(body.actions[0].value);
     body.channel = {
       id: parsedValues.channel_id,
@@ -503,7 +516,7 @@ class PRReview {
       item: {
         ts: parsedValues.pr_post_id,
         channel: body.channel.id,
-        value: parsedValues.id
+        value: parsedValues.id,
       },
       user: body.user.id,
     };
@@ -653,6 +666,69 @@ class PRReview {
         user: body.user.id,
       });
     }
+  }
+
+  static async nudgeReviewer(body, client) {
+    const values = JSON.parse(body.actions[0].value);
+    const dbEntry = values.dbEntry;
+    debugger;
+    client.chat.postMessage({
+      token,
+      channel: dbEntry.author,
+      text: `<@${dbEntry.author}> has addressed your comments for their PR at ${dbEntry.link}`,
+      blocks: [
+        {
+          type: "section",
+          text: {
+            type: "mrkdwn",
+            text: `<@${dbEntry.author}> has addressed your comments for their ${dbEntry.service} PR.`,
+          },
+        },
+        {
+          type: "actions",
+          elements: [
+            {
+              type: "button",
+              text: {
+                type: "plain_text",
+                text: "View PR",
+                emoji: true,
+              },
+              url: dbEntry.link,
+              action_id: "link-button-action",
+            },
+            {
+              type: "button",
+              text: {
+                type: "plain_text",
+                emoji: true,
+                text: ":reviewed: Review",
+              },
+              style: "danger",
+              value: JSON.stringify({
+                id: dbEntry._id,
+                channel_id: values.channel_id,
+              }),
+              action_id: "review-pr-action",
+            },
+            {
+              type: "button",
+              text: {
+                type: "plain_text",
+                emoji: true,
+                text: ":approved: Approve",
+              },
+              style: "primary",
+              value: JSON.stringify({
+                id: dbEntry._id,
+                channel_id: values.channel_id,
+              }),
+              action_id: "approve-pr-action",
+            },
+          ],
+        },
+      ],
+    });
   }
 }
 
