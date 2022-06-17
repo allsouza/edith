@@ -11,7 +11,8 @@ class Normalizer {
         name: body.actions[0].value.channel_name
       }
     };
-    body.actions[0].value = body.actions[0].value.pr_post_id;
+    body.actions[0].value = body.actions[0].value.id;
+    debugger
     return body;
   }
 }

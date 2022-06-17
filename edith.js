@@ -5,13 +5,9 @@ const { MongoDB } = require("./components/db.js");
 const { AppHome } = require("./components/app-home.js");
 
 const app = new App({
-  // token: process.env.SLACK_BOT_TOKEN,
-  // signingSecret: process.env.SLACK_SIGNING_SECRET
-  token: "xoxb-3693562128929-3679290333813-A1vzYb52jmT5E3lIenCDxnNE",
-  signingSecret: "4e4c66261d823ff9f19797036a786e94"
+  token: process.env.SLACK_BOT_TOKEN,
+  signingSecret: process.env.SLACK_SIGNING_SECRET
 });
-
-app.command("/hello", async ({ack, payload}) => ack(":waving: Hello!"));
 
 // Opens the modal to create a PR Review request
 app.command("/pr_review", async ({ ack, payload }) => {
@@ -57,6 +53,11 @@ app.action("merged-button-action", ({ ack, body, client }) => {
   ack();
   PRReview.mergedPR(body, client);
 });
+
+app.action("delete-button-action", ({ack, body, client}) => {
+  ack();
+  PRReview.cancelPR(body, client);
+})
 
 // Views all PRs from App Home
 app.action("view-all-prs-action", ({ ack, body, client }) => {

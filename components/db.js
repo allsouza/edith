@@ -1,4 +1,4 @@
-const { MongoClient } = require("mongodb");
+const { MongoClient, ObjectId } = require("mongodb");
 const { EncryptionEngine } = require("../utils/encryption-engine.js");
 const { TimeFormatter } = require("../utils/time-formatter.js");
 
@@ -20,6 +20,7 @@ class MongoDB {
         .collection(collectionName)
         .insertOne(EncryptionEngine.encryptPRPayload(data));
       console.log(`PR saved to MongoDB with id: ${result.insertedId}`);
+      return result.insertedId.toString();
     } catch (error) {
       console.error(error);
     } finally {
@@ -37,9 +38,9 @@ class MongoDB {
       let result = await client
         .db()
         .collection(collectionName)
-        .find()
+        .find({status: { $in: ["open", "reviewed", "approved"]}})
         .toArray();
-      result = result.map(entry => EncryptionEngine.decryptPRPayload(entry));
+      result = result.map((entry) => EncryptionEngine.decryptPRPayload(entry));
       return result;
     } catch (error) {
       console.error(error);
@@ -51,20 +52,29 @@ class MongoDB {
   /*
     Fetches a PR review request using the post_id
   */
-  static async findPR(collectionName, post_id) {
+  static async findPR(collectionName, id) {
     const client = createClient();
     try {
       await client.connect();
       const entry = await client
         .db()
         .collection(collectionName)
-        .findOne({ pr_post_id: post_id });
+        .findOne({ _id: ObjectId(id) });
+      debugger
       return EncryptionEngine.decryptPRPayload(entry);
     } catch (error) {
       console.error(error);
     } finally {
       client.close();
     }
+  }
+  
+  /*
+    Fetches a PR review request from any collection using the link url
+  */
+  static async findByPRLink(link) {
+    const encryptedURL = EncryptionEngine.encryptObject({link})
+    debugger
   }
 
   /*
@@ -74,10 +84,10 @@ class MongoDB {
     const client = createClient();
     try {
       await client.connect();
-      await client
+      return await client
         .db()
         .collection(collectionName)
-        .updateOne({ _id: id }, { $set: { status: status } });
+        .updateOne({ _id: ObjectId(id) }, { $set: { status: status } });
     } catch (error) {
       console.log(error);
     } finally {
@@ -87,7 +97,6 @@ class MongoDB {
 
   /*
     Finalizes the PR review
-    Deletes the entry from the DB and saves stats data to possibly be used in the future
   */
   static async finalizePR(collectionName, id) {
     const client = createClient();
@@ -97,32 +106,52 @@ class MongoDB {
       const data = await client
         .db()
         .collection(collectionName)
-        .findOneAndDelete({ pr_post_id: id });
-      const dbStatsData = await client
+        .findOneAndUpdate({ _id: ObjectId(id) }, { $set: { status: "merged" } });
+      debugger
+      // const dbStatsData = await client
+      //   .db()
+      //   .collection(`stats`)
+      //   .findOne({ channel_id: collectionName });
+      // if (dbStatsData) {
+      //   await client
+      //     .db()
+      //     .collection(`stats`)
+      //     .updateOne(
+      //       { _id: dbStatsData._id },
+      //       {
+      //         $set: {
+      //           avg_close_in_secs: TimeFormatter.avgClosingTime(
+      //             dbStatsData,
+      //             data
+      //           )
+      //         }
+      //       }
+      //     );
+      // } else {
+      //   await client
+      //     .db()
+      //     .collection(`stats`)
+      //     .insertOne(createStatsData(data, collectionName, "close"));
+      // }
+    } catch (error) {
+      console.error(error);
+    } finally {
+      client.close();
+    }
+  }
+
+  /*
+    Cancels the PR review
+  */
+  static async cancelPR(collectionName, id) {
+    const client = createClient();
+    try {
+      await client.connect();
+      debugger;
+      const data = await client
         .db()
-        .collection(`stats`)
-        .findOne({ channel_id: collectionName });
-      if (dbStatsData) {
-        await client
-          .db()
-          .collection(`stats`)
-          .updateOne(
-            { _id: dbStatsData._id },
-            {
-              $set: {
-                avg_close_in_secs: TimeFormatter.avgClosingTime(
-                  dbStatsData,
-                  data
-                )
-              }
-            }
-          );
-      } else {
-        await client
-          .db()
-          .collection(`stats`)
-          .insertOne(createStatsData(data, collectionName, "close"));
-      }
+        .collection(collectionName)
+        .findOneAndUpdate({ _id: ObjectId(id) }, { $set: { status: "canceled" } });
     } catch (error) {
       console.error(error);
     } finally {
@@ -151,11 +180,9 @@ class MongoDB {
             { _id: dbStatsData._id },
             {
               $set: {
-                avg_first_interaction_in_secs: TimeFormatter.avgFirstInteractionTime(
-                  dbStatsData,
-                  data
-                )
-              }
+                avg_first_interaction_in_secs:
+                  TimeFormatter.avgFirstInteractionTime(dbStatsData, data),
+              },
             }
           );
       } else {
@@ -191,13 +218,9 @@ class MongoDB {
     const client = createClient();
     try {
       await client.connect();
-      const stats = await client
-        .db()
-        .collection("stats")
-        .find()
-        .toArray();
+      const stats = await client.db().collection("stats").find().toArray();
       const result = {};
-      stats.forEach(stat => (result[stat.channel_id] = stat));
+      stats.forEach((stat) => (result[stat.channel_id] = stat));
       return result;
     } catch (error) {
       console.error(error);
@@ -218,7 +241,7 @@ function createStatsData(prData, collectionName, type) {
       channel_id: collectionName,
       count: count,
       avg_first_interaction_in_secs: avgFirstInteractionInSecs,
-      avg_close_in_secs: 0
+      avg_close_in_secs: 0,
     };
   } else {
     const count = 1;
@@ -227,7 +250,7 @@ function createStatsData(prData, collectionName, type) {
       channel_id: collectionName,
       count: count,
       avg_first_interaction_in_secs: avgCloseInSecs,
-      avg_close_in_secs: avgCloseInSecs
+      avg_close_in_secs: avgCloseInSecs,
     };
   }
 }
