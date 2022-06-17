@@ -219,6 +219,7 @@ class PRReview {
       //Save to DB
       await MongoDB.savePR(channel_id, dbObject);
     } catch (error) {
+      debugger
       if (error.data && error.data.errors[0].includes("invalid url")) {
         app.client.chat.postEphemeral({
           token: token,

@@ -5,9 +5,13 @@ const { MongoDB } = require("./components/db.js");
 const { AppHome } = require("./components/app-home.js");
 
 const app = new App({
-  token: process.env.SLACK_BOT_TOKEN,
-  signingSecret: process.env.SLACK_SIGNING_SECRET
+  // token: process.env.SLACK_BOT_TOKEN,
+  // signingSecret: process.env.SLACK_SIGNING_SECRET
+  token: "xoxb-3693562128929-3679290333813-A1vzYb52jmT5E3lIenCDxnNE",
+  signingSecret: "4e4c66261d823ff9f19797036a786e94"
 });
+
+app.command("/hello", async ({ack, payload}) => ack(":waving: Hello!"));
 
 // Opens the modal to create a PR Review request
 app.command("/pr_review", async ({ ack, payload }) => {
