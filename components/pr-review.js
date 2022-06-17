@@ -605,6 +605,13 @@ class PRReview {
             ],
           },
         });
+      } else {
+        client.chat.postEphemeral({
+        token: token,
+        channel: dbEntry.author,
+        user: dbEntry.author,
+        text: `:checkered_flag: Successfully marked ${dbEntry.service} PR review request as merged!`,
+      });
       }
     } else {
       client.chat.postEphemeral({
@@ -675,10 +682,12 @@ class PRReview {
   static async nudgeReviewer(body, client) {
     const values = JSON.parse(body.actions[0].value);
     const dbEntry = values.dbEntry;
+    const message = body.message.text;
+    const reviewerId = message.substring(message.indexOf('@')+1, message.lastIndexOf('>'));
     debugger;
     client.chat.postMessage({
       token,
-      channel: dbEntry.author,
+      channel: reviewerId,
       text: `<@${dbEntry.author}> has addressed your comments for their PR at ${dbEntry.link}`,
       blocks: [
         {

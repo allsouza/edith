@@ -64,27 +64,27 @@ app.action("nudge-reviewer-action", ({ack, body, client}) => {
   PRReview.nudgeReviewer(body, client);
 })
 
-// Views all PRs from App Home
-app.action("view-all-prs-action", ({ ack, body, client }) => {
-  ack();
-  AppHome.viewAllPRs(body, client);
-});
+// // Views all PRs from App Home
+// app.action("view-all-prs-action", ({ ack, body, client }) => {
+//   ack();
+//   AppHome.viewAllPRs(body, client);
+// });
 
-// Create PR Review request from App Home
-app.action("create-pr-action", ({ ack, body }) => {
-  ack();
-  PRReview.createPRReviewModal(body, app);
-});
+// // Create PR Review request from App Home
+// app.action("create-pr-action", ({ ack, body }) => {
+//   ack();
+//   PRReview.createPRReviewModal(body, app);
+// });
 
 // Listens for when reactins are added and acts if :approved: or :reviewed:
 app.event("reaction_added", async ({ event, client }) => {
   PRReview.computeReaction(event, client);
 });
 
-// Trigger event when app home is opened
-app.event("app_home_opened", async ({ event, client, context }) => {
-  AppHome.open(event, client, context);
-});
+// // Trigger event when app home is opened
+// app.event("app_home_opened", async ({ event, client, context }) => {
+//   AppHome.open(event, client, context);
+// });
 
 app.event("view_closed", async ({ event, client }) => {});
 
